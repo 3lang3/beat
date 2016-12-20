@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <div id="app">
+      <a href="javascript:;" @click="login">login</a>
+      <a href="javascript:;" @click="getCookie">cookie</a>
+    </div>
+    <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/vue.js"></script>
+    <script>
+      var app = new Vue({
+        el: '#app',
+        data: {
+          loginStatus: false
+        },
+        methods: {
+          login: function() {
+            $.get('/login', function(res){
+              console.log(res);
+            })
+          },
+          getCookie: function() {
+            $.get('/cookie', function(res){
+              console.log(res);
+            })
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
