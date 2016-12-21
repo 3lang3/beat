@@ -148,7 +148,7 @@ class PurchaseClass{
     }
 
     submitlPurchase(target, callback) {
-        if(target == null) return callback(null, true);
+        if(target == null || this.switch == true) return callback(null, true);
 
         Common.FetchEvent({
             url: _G.C5.purchaseSubmit,

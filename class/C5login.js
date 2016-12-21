@@ -108,7 +108,7 @@ function cycleCode(callback) {
 // 若登陆不成功 重复登陆流程
 function cycleAuth(callback) {
     let AuthStatus = false;
-
+    console.log('enter login system')
     async.whilst(
         () => AuthStatus === false,
         (callback) => {

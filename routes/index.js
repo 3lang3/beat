@@ -18,6 +18,7 @@ router.get('/', function(req, res, next) {
 router.get('/login', (req, res, nexxt) => {
   fetchLoginSystem((result) => {
     global.cookie = result.cookie.join(';');
+    res.json({status: 'success', cookie: global.cookie })
   });
 })
 
