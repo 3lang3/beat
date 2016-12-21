@@ -34,4 +34,7 @@ exports.User = {
     id: 12301508
 }
 
-exports.cookie = null;
+global.cookie = null;
+
+global.PurchaseHash = {};
+global.BuyHash = {};

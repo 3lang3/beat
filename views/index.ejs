@@ -1,37 +1,263 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="/stylesheets/materialize.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
     <div id="app">
-      <a href="javascript:;" @click="login">login</a>
-      <a href="javascript:;" @click="getCookie">cookie</a>
+        <div class="">
+        <nav class="indigo z-depth-0">
+            <div class="nav-wrapper">
+                <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+                <a style="margin-left:20px;" href="#!" class="brand-logo">DOTA2FETCH</a>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="#"><i class="material-icons">search</i></a></li>
+                    <li><a href="javascript:;" @click="loginC5"><i v-bind:class="[isLogged ? 'lime-text' : '', 'material-icons']">wifi</i></a></li>
+                    <li><a href="#"><i class="material-icons">refresh</i></a></li>
+                    <li>
+                        SearchType:
+                        <input v-model="typeSearch" type="radio" value="Item" id="test1" />
+                        <label for="test1">Item</label>
+                        <input v-model="typeSearch" type="radio" value="Bug" id="test2" />
+                        <label for="test2">Bug</label>
+                        <input v-model="typeSearch" type="radio" value="Purchase" id="test3" />
+                        <label for="test3">Purchase</label>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        </div>
+        <div class="row z-depth-1">
+            <div class="row" v-show="typeSearch == 'Item'">
+                <form id="buyForm">
+                    <div class="col s2 offset-s1">
+                        <div class="input-field col s12">
+                            <input id="itemID" type="text" class="validate" name="id">
+                            <label for="itemID">Item ID</label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <!--<div class="input-field col s6">
+                            <input id="minPrice" type="text" class="validate" name="min">
+                            <label for="minPrice">Min Price</label>
+                        </div> -->
+                        <div class="input-field col s12">
+                            <input id="maxPrice" type="text" class="validate" name="price">
+                            <label for="maxPrice">Max Price</label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <select multiple name="type">
+                                <option value="" disabled selected>Choose Gem Type</option>
+                                <option value="effect">Effect</option>
+                                <option value="color">Color</option>
+                                <option value="animation">Animation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <input id="Detail" type="text" name="detail" class="validate">
+                            <label for="Detail">Detail</label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <button class="waves-effect pink waves-light btn" @click.prevent="buyItem">Fetch</button>
+                            <button class="waves-effect waves-orange btn-flat" @click.prevent="addFish">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row" v-show="typeSearch == 'Purchase'">
+                <form id="purchaseForm">
+                    <div class="col s2 offset-s2">
+                        <div class="input-field col s12">
+                            <input id="purchaseID" type="text" class="validate" name="id">
+                            <label for="purchaseID">Item ID</label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <input id="purchaseNum" type="text" name="num" class="validate">
+                            <label for="purchaseNum">Number</label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <input id="purchaseTime" type="text" name="time" class="validate">
+                            <label for="purchaseTime">Time</label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <button class="waves-effect pink waves-light btn" @click.prevent="purchaseItem">Purchase</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <div class="col s3 fishList" id="fishList">
+                    <div v-for="(list, index) in fishList" class="chip">
+                        <img :src="list.img">
+                        <h5>{{ list.title }}</h5>
+                        <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="value">{{ key }}:<b>{{ value }}</b> </span>
+                        <div class="fishOpration">
+                            <a @click="activeFish(index)" href="javascript:;">Active</a>
+                            <a @click="showFish(index)" href="#modal1">Edit</a>
+                            <a @click="deleteFish(index)" href="javascript:;">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s9 fetchList" id="fetchList" >
+                    <div class="col s12 m2" v-for="(list, key) in purchaseList">
+                        <div class="card">
+                            <div class="card-content">
+                                <h6>{{ list.name }}</h6>
+                            </div>
+                            <div class="card-action">
+                                <a href="javascript:;" @click="purchaseCancel(list.id)">Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s12 m2" v-for="(list, key) in buyList">
+                        <div class="card">
+                            <div class="card-content">
+                                <h6>{{ list.name }}</h6>
+                            </div>
+                            <div class="card-action">
+                                <a href="javascript:;" @click="buyCancel(list.id)">Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Teal page content  -->
+            </div>
+        </div>
     </div>
     <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/materialize.min.js"></script>
     <script src="/javascripts/vue.js"></script>
+
     <script>
-      var app = new Vue({
-        el: '#app',
-        data: {
-          loginStatus: false
-        },
-        methods: {
-          login: function() {
-            $.get('/login', function(res){
-              console.log(res);
-            })
-          },
-          getCookie: function() {
-            $.get('/cookie', function(res){
-              console.log(res);
-            })
-          }
-        }
-      })
+        var app = new Vue({
+            el: '#app',
+            data: {
+                purchaseList: {},
+                buyList: {},
+                fishList: [],
+                searchList: [],
+                modifyFish: {
+                    option: {}
+                },
+                isLogged: false,
+                typeSearch: 'Item',
+            },
+            created: function() {
+               this.getFish();
+               this.getProcessList();
+            },
+            mounted: function() {
+                
+            },
+            methods: {
+                getProcessList: function(){
+                  var _this = this;
+                  $.get('/getProcessList', function(res) {
+                      _this.buyList = res.buy;
+                      _this.purchaseList = res.purchase;
+                  })
+                },
+                loginC5: function() {
+                    var _this = this;
+                    $.get('/login', function(res) {
+                        console.log(res);
+                        if (res.status == 'success') _this.isLogged = true;
+                    })
+                },
+                purchaseItem: function(){
+                    var _this = this;
+                    $.post('/purchase', $('#purchaseForm').serialize(), function(res) {
+                        console.log(res);
+                        _this.purchaseList = res;
+                    })
+                },
+                purchaseCancel: function(i){
+                    var _this = this;
+                    $.post('/purchaseCancel', {id: i}, function(res) {
+                        console.log(res);
+                        _this.purchaseList = res;
+                    })
+                },
+                buyItem: function(){
+                    var _this = this;
+                    $.post('/buy', $('#buyForm').serialize(), function(res) {
+                        console.log(res);
+                        _this.buyList = res;
+                    })
+                },
+                buyCancel: function(i){
+                    var _this = this;
+                    $.post('/buyCancel', {id: i}, function(res) {
+                        console.log(res);
+                        _this.buyList = res;
+                    })
+                },
+                addFish: function() {
+                    $.post('/fish', $('#buyForm').serialize(), function(res) {
+                        console.log(res)
+                    })
+                },
+                getFish: function() {
+                    var _this = this;
+                    $.get('/fish', function(res) {
+                        _this.fishList = res.list;
+                    })
+                },
+                activeFish: function(i) {
+                    var _this = this;
+                    var fish = this.fishList[i];
+
+                    $.post('/buy', fish.option, function(res) {
+                        _this.buyList = res;
+                    })
+                },
+                deleteFish: function(i) {
+                    var fish = this.fishList[i];
+                    var _this = this;
+                    $.ajax({
+                        url: '/fish',
+                        type: 'delete',
+                        data: {
+                            id: fish.option.id
+                        }
+                    })
+                    .done(function(res) {
+                        _this.fishList.splice(i, 1);
+                    })
+                }
+            }
+        })
+
+        $(function(){
+
+           $('select').material_select();
+        })
     </script>
-  </body>
+</body>
+
 </html>

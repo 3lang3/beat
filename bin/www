@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-
+process.binding('http_parser').HTTPParser = require('http-parser-js').HTTPParser;
 var app = require('../app');
 var debug = require('debug')('t:server');
 var http = require('http');

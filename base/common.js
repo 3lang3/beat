@@ -10,25 +10,15 @@ function getItemTypeIdEvent(itemId, type, callback) {
     let _urlType = type == 'sale' ? '/S.html' : '/P.html',
         _url = _G.C5.baseUrl + 'dota/' + itemId + _urlType,
         p =  type == 'sale' ? '#sale' : '#buy';
+    
+    FetchEvent({
+        url: _url,
+        callback: (data) => {
+            let $ = cheerio.load(data.text);
+            let typeId = $(p).find('tbody').attr('data-url').split('=')[1].split('&')[0];
 
-    FetchEvent(_url, (data) => {
-        let $ = cheerio.load(data.text);
-        let typeId = $(p).find('tbody').attr('data-url').split('=')[1].split('&')[0];
-
-        callback && callback(null, typeId);
-    })
-}
-
-exports.getItemTypeId = function (itemId, callback) {
-    async.parallel([
-        (_c) => {
-            getItemTypeIdEvent(itemId, 'sale', _c);
-        },
-        (_c) => {
-            getItemTypeIdEvent(itemId, 'buy', _c);
+            callback && callback(null, typeId);
         }
-    ], (err, result) => {
-        callback && callback(null, result);
     })
 }
 
@@ -41,6 +31,7 @@ function getItemTypePriceEvent(ids, callback) {
         (_c) => {
             FetchEvent({
                 url: _saleUrl,
+                cookie: global.cookie,
                 callback: (data) => {
                     let _r = {price: null},
                     json = eval('(' + data.text + ')');
@@ -56,6 +47,7 @@ function getItemTypePriceEvent(ids, callback) {
         (_c) => {
             FetchEvent({
                 url: _purchaseUrl,
+                cookie: global.cookie,
                 callback: (data) => {
                     let _r = {price: null},
                     json = eval('(' + data.text + ')'),
@@ -92,6 +84,21 @@ exports.getItemTypePrice = function(itemId, callback) {
     })
 }
 
+function getItemTypeId(itemId, callback) {
+    async.parallel([
+        (_c) => {
+            getItemTypeIdEvent(itemId, 'sale', _c);
+        },
+        (_c) => {
+            getItemTypeIdEvent(itemId, 'buy', _c);
+        }
+    ], (err, result) => {
+        callback && callback(null, result);
+    })
+}
+
+
+
 exports.getPurchasingList = function({name, callback}) {
     FetchEvent({
         url: _G.C5.getPurchasingList,
@@ -124,21 +131,22 @@ exports.getPurchasingList = function({name, callback}) {
     })
 }
 
-exports.FetchEvent = function({url, type, data, callback, cookie}) {
+function FetchEvent({url, type, data, callback, cookie}) {
 
     if(type == 'post') {
         superagent
             .post(url)
             .type('form')
             .set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
-            .set('Cookie', cookie || _G.cookie)
+            .set('Cookie', cookie || global.cookie)
+            .set('Accept-Language', 'zh-CN,zh')
             .send(data)
             .timeout(5000)
             .end((err, data) => {
                 if (err) {
                     console.log(url, 'call again!');
                     return setTimeout(() => {
-                        FetchEvent({url, type, callback, cookie})
+                        FetchEvent({url, type, data, callback, cookie})
                     }, 2000);
                 }
                 callback && callback(data);
@@ -147,19 +155,23 @@ exports.FetchEvent = function({url, type, data, callback, cookie}) {
         superagent
             .get(url)
             .set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
-            .set('Cookie', cookie ||  _G.cookie)        
+            .set('Cookie', cookie || global.cookie)    
+            .set('Accept-Language', 'zh-CN,zh')    
             .timeout(5000)
             .end((err, data) => {
                 if (err) {
-                    console.log(url, 'call again!');
+                    console.log(url,  'call again!');
                     return setTimeout(() => {
-                        FetchEvent({url, type, callback, cookie})
+                        FetchEvent({url, type, data, callback, cookie})
                     }, 2000);
                 }
                 callback && callback(data);
             })
     }
 }
+
+exports.getItemTypeId = getItemTypeId;
+exports.FetchEvent = FetchEvent;
 
 exports.postPurchase = function ({form, callback}) {
     FetchEvent({
@@ -169,6 +181,31 @@ exports.postPurchase = function ({form, callback}) {
         cookie: G.cookie,
         callbacl: (data) => {
             callback(null, true);
+        }
+    })
+}
+
+exports.cancelPurchase = function ({data, callback}) {
+    FetchEvent({
+        url: _G.C5.purchaseCancel,
+        type: 'post',
+        data: data,
+        cookie: global.cookie,
+        callback: (data) => {
+            callback && callback(data);
+        }
+    })
+}
+
+exports.C5Payment = function(item, callback) {
+    FetchEvent({
+        url: _G.C5.paymentUrl + '?id=' + item.id,
+        type: 'post',
+        callback: (data) => {
+
+            let json = JSON.parse(data.text);
+            console.log(json);
+            callback(null, json);
         }
     })
 }

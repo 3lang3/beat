@@ -148,6 +148,7 @@ function fetchLoginSystem(callback) {
     ], (err, result) => {
         console.log(result);
         result.cookie.push('C5Machines=DpHNPZ%2FxieGRVQOgSzADvE3F8JvoKn93pBQPr1Qi%2BgY%3D; path=/; domain=.c5game.com; HttpOnly');
+        result.cookie.push('C5Lang=zh; path=/; domain=.c5game.com; HttpOnly');
         callback && callback(result)
     })
 }
