@@ -17,6 +17,7 @@ class PurchaseClass{
         this.task = option.task;
         this.name = null;
         this.img = null;
+        this.maxPurchasePrice = false;
     }
 
     // 初始化程序
@@ -67,15 +68,20 @@ class PurchaseClass{
     }
     // 比较卖一价格和求一价格 同时判断当前求一是不是Admin
     compareTypePrice(price, callback) {
-        let _price = price[1].num*1;
+        let _price = price[1].num*1 || parseFloat(price[0]) * 0.75;
         let myPrice = _price > 100 ? (price[1].num*1 + 0.1).toFixed(1) : (price[1].num*1 + 0.01).toFixed(2);
         let result = true;
 
-        this.price = myPrice;
+        this.price = ( myPrice >= parseFloat(price[0]) ) ? _price : myPrice;
         this.name = price[1].name;
 
+        if( price[1].isAuthor || this.maxPurchasePrice ) result = false;
 
-        if(myPrice >= parseFloat(price[0]) || price[1].isAuthor) result = false;
+        if(this.price == _price) {
+            this.maxPurchasePrice = true;
+        }else {
+            this.maxPurchasePrice = false;
+        }
 
         return callback(null, result);
     }

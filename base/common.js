@@ -242,7 +242,7 @@ exports.GenerateTask = function({option, callback}) {
     getItemInfo({
         id: option.id,
         callback: (img, name) => {
-            console.log(img, name)
+            
             global.TaskHash[option.task + option.id].img = img;
             global.TaskHash[option.task + option.id].name = name;
 

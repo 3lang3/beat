@@ -28,8 +28,9 @@ exports.User = {
     id: 12301508
 }
 
+exports.GemFilter = ['永恒矩阵', '远行之宝', '安详荣耀', '亡冬之魂', '芳林飞溪', '克萝贝露丝']
+
+
 global.cookie = null;
 
-global.PurchaseHash = {};
-global.BuyHash = {};
 global.TaskHash = {};

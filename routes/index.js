@@ -35,7 +35,6 @@ router.post('/generateTask', (req, res, next) => {
   Common.GenerateTask({
     option: req.body,
     callback: () => {
-      console.log(2)
       res.json(global.TaskHash)
     }
   })
