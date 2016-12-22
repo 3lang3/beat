@@ -199,7 +199,7 @@
                     var _this = this;
                     this.search.status = true;
                     this.search.list = [];
-
+                    
                     $.post('/search', {word: $(word).val()}, function(res) {
                         _this.search.list = res.list;
                         _this.search.status = false;
