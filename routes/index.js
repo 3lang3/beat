@@ -6,8 +6,7 @@ let cheerio = require('cheerio');
 let router = express.Router();
 let _G = require('./../base/global');
 let fetchLoginSystem = require('./../class/C5login');
-let PurchaseClass = require('./../class/Purchase');
-let BuyClass = require('./../class/Buy');
+let searchSystem = require('./../class/Search');
 let Common = require('./../base/common');
 
 /* GET home page. */
@@ -22,38 +21,33 @@ router.get('/login', (req, res, nexxt) => {
   });
 })
 
-router.get('/getProcessList', (req, res, next) => {
-  res.json({
-    buy: global.BuyHash,
-    purchase: global.PurchaseHash
+router.post('/search', (req, res, nexxt) => {
+  searchSystem(req.body.word, (list) => {
+    res.json({list: list})
   })
 })
 
-router.post('/purchase', (req, res, next) => {
-  global.PurchaseHash[req.body.id] = new PurchaseClass(req.body);
-  global.PurchaseHash[req.body.id].init();
-  res.json(global.PurchaseHash)
+router.get('/getTaskList', (req, res, next) => {
+  res.json(global.TaskHash)
 })
 
-router.post('/purchaseCancel', (req, res, next) => {
-  global.PurchaseHash[req.body.id].switch = true;
-  delete global.PurchaseHash[req.body.id];
-
-  res.json(global.PurchaseHash);
+router.post('/generateTask', (req, res, next) => {
+  Common.GenerateTask({
+    option: req.body,
+    callback: () => {
+      console.log(2)
+      res.json(global.TaskHash)
+    }
+  })
 })
 
-router.post('/buy', (req, res, next) => {
-  global.BuyHash[req.body.id] = new BuyClass(req.body);
-  global.BuyHash[req.body.id].init();
-
-  res.json(global.BuyHash)
-})
-
-router.post('/buyCancel', (req, res, next) => {
-  global.BuyHash[req.body.id].switch = true;
-  delete global.BuyHash[req.body.id];
-
-  res.json(global.BuyHash);
+router.post('/cancelTask', (req, res, next) => {
+  Common.CancelTask({
+    task: req.body.task,
+    callback: () => {
+      res.json(global.TaskHash)
+    }
+  })
 })
 
 

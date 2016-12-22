@@ -29,10 +29,10 @@
                         SearchType:
                         <input v-model="typeSearch" type="radio" value="Item" id="test1" />
                         <label for="test1">Item</label>
-                        <input v-model="typeSearch" type="radio" value="Bug" id="test2" />
-                        <label for="test2">Bug</label>
-                        <input v-model="typeSearch" type="radio" value="Purchase" id="test3" />
-                        <label for="test3">Purchase</label>
+                        <input v-model="typeSearch" type="radio" value="Purchase" id="test2" />
+                        <label for="test2">Purchase</label>
+                        <input v-model="typeSearch" type="radio" value="Search" id="test3" />
+                        <label for="test3">Search</label>
                     </li>
                 </ul>
             </div>
@@ -42,19 +42,16 @@
             <div class="row" v-show="typeSearch == 'Item'">
                 <form id="buyForm">
                     <div class="col s2 offset-s1">
+                        <input type="hidden" name="task" value="buy" />
                         <div class="input-field col s12">
                             <input id="itemID" type="text" class="validate" name="id">
                             <label for="itemID">Item ID</label>
                         </div>
                     </div>
                     <div class="col s2">
-                        <!--<div class="input-field col s6">
-                            <input id="minPrice" type="text" class="validate" name="min">
-                            <label for="minPrice">Min Price</label>
-                        </div> -->
                         <div class="input-field col s12">
                             <input id="maxPrice" type="text" class="validate" name="price">
-                            <label for="maxPrice">Max Price</label>
+                            <label for="maxPrice">Price</label>
                         </div>
                     </div>
                     <div class="col s2">
@@ -75,7 +72,7 @@
                     </div>
                     <div class="col s2">
                         <div class="input-field col s12">
-                            <button class="waves-effect pink waves-light btn" @click.prevent="buyItem">Fetch</button>
+                            <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#buyForm')">Fetch</button>
                             <button class="waves-effect waves-orange btn-flat" @click.prevent="addFish">Add</button>
                         </div>
                     </div>
@@ -84,6 +81,7 @@
             <div class="row" v-show="typeSearch == 'Purchase'">
                 <form id="purchaseForm">
                     <div class="col s2 offset-s2">
+                        <input type="hidden" name="task" value="purchase" />
                         <div class="input-field col s12">
                             <input id="purchaseID" type="text" class="validate" name="id">
                             <label for="purchaseID">Item ID</label>
@@ -103,7 +101,22 @@
                     </div>
                     <div class="col s2">
                         <div class="input-field col s12">
-                            <button class="waves-effect pink waves-light btn" @click.prevent="purchaseItem">Purchase</button>
+                            <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#purchaseForm')">Purchase</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row" v-show="typeSearch == 'Search'">
+                <form id="searchForm">
+                    <div class="col s8 offset-s2">
+                        <div class="input-field select-wrapper icons">
+                            <div v-show="search.status" class="progress" style="position: absolute; bottom: 2px;">
+                                <div class="indeterminate"></div>
+                            </div>
+                            <input type="text" autocomplate id="searchWord" name="word" @keyup="searchSubmit('#searchWord')" placeholder="Choose your option">
+                             <ul v-show="search.list.length > 0" class="dropdown-content select-dropdown" style="width: 100%; position: absolute; top: 48px; left: 0px; opacity: 1; display: block;">
+                                <li v-for="(list, index) in search.list"><img :src="list.img" class="left circle"><span>{{ list.name }} | {{list.num}} | {{list.price}}</span></li>
+                            </ul>
                         </div>
                     </div>
                 </form>
@@ -124,23 +137,16 @@
                     </div>
                 </div>
                 <div class="col s9 fetchList" id="fetchList" >
-                    <div class="col s12 m2" v-for="(list, key) in purchaseList">
+                    <div class="col s12 m2" v-for="(list, key) in taskList">
                         <div class="card">
+                            <div class="card-image">
+                                <img :src="list.img">
+                            </div>
                             <div class="card-content">
                                 <h6>{{ list.name }}</h6>
                             </div>
                             <div class="card-action">
-                                <a href="javascript:;" @click="purchaseCancel(list.id)">Remove</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col s12 m2" v-for="(list, key) in buyList">
-                        <div class="card">
-                            <div class="card-content">
-                                <h6>{{ list.name }}</h6>
-                            </div>
-                            <div class="card-action">
-                                <a href="javascript:;" @click="buyCancel(list.id)">Remove</a>
+                                <a href="javascript:;" @click="cancelTask(list.task + list.id)">Remove</a>
                             </div>
                         </div>
                     </div>
@@ -150,6 +156,7 @@
         </div>
     </div>
     <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/lodash.min.js"></script>
     <script src="/javascripts/materialize.min.js"></script>
     <script src="/javascripts/vue.js"></script>
 
@@ -157,10 +164,13 @@
         var app = new Vue({
             el: '#app',
             data: {
-                purchaseList: {},
-                buyList: {},
+                taskList: {},
                 fishList: [],
-                searchList: [],
+                search: {
+                    status: false,
+                    word: '',
+                    list: []
+                },
                 modifyFish: {
                     option: {}
                 },
@@ -169,17 +179,13 @@
             },
             created: function() {
                this.getFish();
-               this.getProcessList();
-            },
-            mounted: function() {
-                
+               this.getTaskList();
             },
             methods: {
-                getProcessList: function(){
+                getTaskList: function(){
                   var _this = this;
-                  $.get('/getProcessList', function(res) {
-                      _this.buyList = res.buy;
-                      _this.purchaseList = res.purchase;
+                  $.get('/getTaskList', function(res) {
+                      _this.taskList = res;
                   })
                 },
                 loginC5: function() {
@@ -189,32 +195,28 @@
                         if (res.status == 'success') _this.isLogged = true;
                     })
                 },
-                purchaseItem: function(){
+                searchSubmit: _.debounce(function(word) {
                     var _this = this;
-                    $.post('/purchase', $('#purchaseForm').serialize(), function(res) {
-                        console.log(res);
-                        _this.purchaseList = res;
+                    this.search.status = true;
+                    this.search.list = [];
+
+                    $.post('/search', {word: $(word).val()}, function(res) {
+                        _this.search.list = res.list;
+                        _this.search.status = false;
+                    })
+                }, 1000),
+                generateTask: function(el){
+                    var _this = this;
+                    console.log($(el).serialize())
+                    $.post('/generateTask', $(el).serialize(), function(res) {
+                        _this.taskList = res;
                     })
                 },
-                purchaseCancel: function(i){
+                cancelTask: function(task){
                     var _this = this;
-                    $.post('/purchaseCancel', {id: i}, function(res) {
-                        console.log(res);
-                        _this.purchaseList = res;
-                    })
-                },
-                buyItem: function(){
-                    var _this = this;
-                    $.post('/buy', $('#buyForm').serialize(), function(res) {
-                        console.log(res);
-                        _this.buyList = res;
-                    })
-                },
-                buyCancel: function(i){
-                    var _this = this;
-                    $.post('/buyCancel', {id: i}, function(res) {
-                        console.log(res);
-                        _this.buyList = res;
+                    console.log(task)
+                    $.post('/cancelTask', {task: task}, function(res) {
+                        _this.taskList = res;
                     })
                 },
                 addFish: function() {
@@ -232,7 +234,7 @@
                     var _this = this;
                     var fish = this.fishList[i];
 
-                    $.post('/buy', fish.option, function(res) {
+                    $.post('/generateTask', fish.option, function(res) {
                         _this.buyList = res;
                     })
                 },
@@ -254,7 +256,6 @@
         })
 
         $(function(){
-
            $('select').material_select();
         })
     </script>

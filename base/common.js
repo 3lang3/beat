@@ -5,6 +5,8 @@ let superagent = require('superagent');
 let async = require('async');
 let _ = require('lodash');
 let _G = require('./base.config');
+let PurchaseClass = require('./../class/Purchase');
+let BuyClass = require('./../class/Buy');
 
 function getItemTypeIdEvent(itemId, type, callback) {
     let _urlType = type == 'sale' ? '/S.html' : '/P.html',
@@ -155,8 +157,9 @@ function FetchEvent({url, type, data, callback, cookie}) {
         superagent
             .get(url)
             .set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
-            .set('Cookie', cookie || global.cookie)    
+            .set('Cookie', cookie || global.cookie)
             .set('Accept-Language', 'zh-CN,zh')    
+            .send(data)
             .timeout(5000)
             .end((err, data) => {
                 if (err) {
@@ -208,4 +211,49 @@ exports.C5Payment = function(item, callback) {
             callback(null, json);
         }
     })
+}
+
+function getItemInfo({id, callback}) {
+    FetchEvent({
+        url: _G.C5.baseUrl + 'dota/' + id + '/S.html',
+        callback: (data) => {
+            let $ = cheerio.load(data.text);
+            let img = $('.sale-item-img img').attr('src');
+            let name = $('.sale-item-img img').attr('alt');
+            callback && callback(img, name);
+        }
+    })
+}
+
+exports.getItemInfo = getItemInfo;
+
+exports.GenerateTask = function({option, callback}) {
+    switch (option.task) {
+        case 'purchase':
+            global.TaskHash[option.task + option.id] = new PurchaseClass(option);
+            break;
+        case 'buy':
+            global.TaskHash[option.task + option.id] = new BuyClass(option);
+            break;
+    }
+
+    global.TaskHash[option.task + option.id].init();
+
+    getItemInfo({
+        id: option.id,
+        callback: (img, name) => {
+            console.log(img, name)
+            global.TaskHash[option.task + option.id].img = img;
+            global.TaskHash[option.task + option.id].name = name;
+
+            callback && callback();
+        }
+    })
+}
+
+exports.CancelTask = function({task, callback}) {
+    global.TaskHash[task].switch = true;
+    delete global.TaskHash[task];
+
+    callback && callback();
 }

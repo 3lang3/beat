@@ -14,6 +14,9 @@ class PurchaseClass{
         this.num = option.num || 1,
         this.name = null;
         this.switch = null;
+        this.task = option.task;
+        this.name = null;
+        this.img = null;
     }
 
     // 初始化程序

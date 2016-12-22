@@ -14,8 +14,10 @@ class BuyClass {
         this.price = option.price;
         this.detail = option.detail || false;
         this.pageUrl = _G.C5.baseUrl + 'dota/' + option.id + '/S.html';
-        this.option = option;
+        this.task = option.task;
         this.switch = null;
+        this.name = null;
+        this.img = null;
     }
 
     init() {
