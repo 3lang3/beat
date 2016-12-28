@@ -18,6 +18,7 @@ class PurchaseClass{
         this.name = null;
         this.img = null;
         this.maxPurchasePrice = false;
+        this.count = 0;
     }
 
     // 初始化程序
@@ -137,11 +138,16 @@ class PurchaseClass{
     }
 
     ifNeedCancelPurchase(obj, callback) {
-        if(obj == null || obj == false) return callback(null, null);
+        if(obj == null || obj == false || this.count >= 3) return callback(null, null);
         this.cancelPurchase(obj, callback);
     }
 
     cancelPurchase(id, callback) {
+
+        if(this.count >= 2) {
+            return this.reduceCount(callback);
+        }
+
         Common.FetchEvent({
             url: _G.C5.purchaseCancel,
             type: 'post',
@@ -150,7 +156,12 @@ class PurchaseClass{
                 id: id
             },
             callback: (data) => {
-                console.log('取消求购', JSON.parse(data.text))
+                
+                if(JSON.parse(data.text).status == 200) {
+                    this.count++;
+                    this.reduceCount()
+                }
+                console.log('取消求购', JSON.parse(data.text), this.count)
                 callback && callback(null, true);
             }
         })
@@ -174,6 +185,13 @@ class PurchaseClass{
                 callback && callback(null, true);
             }
         })
+    }
+
+    reduceCount(callback) {
+        
+        setTimeout(() => {
+            this.count--;
+        }, 60*60*1000)
     }
 }
 
