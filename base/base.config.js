@@ -9,7 +9,9 @@ exports.C5 = {
     purchaseItemInfo: 'https://www.c5game.com/api/purchase/item.html',
     purchaseSubmit: 'https://www.c5game.com/api/purchase/submit.html',
     purchaseList: 'https://www.c5game.com/user/purchase/index.html',
-    purchaseCancel: 'https://www.c5game.com/api/purchase/cancel.html'
+    purchaseCancel: 'https://www.c5game.com/api/purchase/cancel.html',
+    inventoryList: 'https://www.c5game.com/user/inventory.html',
+    quickUrl: 'https://www.c5game.com/user/sell/quick.html?appid=570'
 };
 
 exports.Time = {

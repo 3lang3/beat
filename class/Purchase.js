@@ -166,14 +166,14 @@ class PurchaseClass{
     }
 
     ifNeedCancelPurchase(obj, callback) {
-        if(obj == null || obj == false || this.count >= 3) return callback(null, null);
+        if(obj == null || obj == false || this.count >= 2) return callback(null, null);
         this.cancelPurchase(obj, callback);
     }
 
     cancelPurchase(id, callback) {
 
         if(this.count >= 2) {
-            return callback(null, null);
+            return callback(null, true);
         }
 
         Common.FetchEvent({
@@ -216,10 +216,51 @@ class PurchaseClass{
     }
 
     reduceCount(callback) {
-        
         setTimeout(() => {
             this.count--;
         }, 60*60*1000)
+    }
+
+    inventoryAutoSaleIds(callback) {
+        let saleNames = [], saleIds = [];
+        _.map(global.TaskHash, (task) => {
+            if(task.task == 'purchase') {
+                saleNames.push(task.name);
+            }
+        });
+
+        Common.FetchEvent({
+            url: _G.C5.inventoryList,
+            cookie: global.cookie,
+            callback: (data) => {
+                let $ = cheerio.load(data.text);
+                $('#inventory-item-form li.item').each((i, el) => {
+                    saleNames.map((name) => {
+                        if($(el).find(img).attr('alt') == name ) {
+                            saleIds.push($(el).find('input[name="id[]"]').val());
+                        }
+                    })
+                })
+
+                callback(null, saleIds);
+            }
+        })
+    }
+
+    inventoryAutoSale(saleIds, callback) {
+        superagent
+            .post(_G.C5.quickUrl)
+            .type('form')
+            .set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
+            .set('Cookie', global.cookie)
+            .set('Accept-Language', 'zh-CN,zh')
+            .field({
+                'id[]': saleIds
+            })
+            .end((err, data) => {
+                let $ = cheerio.load(data.text, {decodeEntities: false});
+                
+            })
     }
 }
 
