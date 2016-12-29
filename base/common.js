@@ -8,6 +8,7 @@ let _G = require('./base.config');
 let PurchaseClass = require('./../class/Purchase');
 let BuyClass = require('./../class/Buy');
 
+// 
 function getItemTypeIdEvent(itemId, type, callback) {
     let _urlType = type == 'sale' ? '/S.html' : '/P.html',
         _url = _G.C5.baseUrl + 'dota/' + itemId + _urlType,
@@ -18,8 +19,63 @@ function getItemTypeIdEvent(itemId, type, callback) {
         callback: (data) => {
             let $ = cheerio.load(data.text);
             let typeId = $(p).find('tbody').attr('data-url').split('=')[1].split('&')[0];
+            let img = $('.sale-item-img img').attr('src');
+            let title = $('.sale-item-img img').attr('alt');
 
             callback && callback(null, typeId);
+        }
+    })
+}
+
+exports.initInfoEvent = function(itemId, callback) {
+    let _saleUrl = _G.C5.baseUrl + 'dota/' + itemId + '/S.html',
+        _purchaseUrl = _G.C5.baseUrl + 'dota/' + itemId + '/P.html';
+
+    async.parallel([
+        (_c) => {
+            FetchEvent({
+                url: _saleUrl,
+                callback: (data) => {
+                    let $ = cheerio.load(data.text);
+                    let typeId = $('#sale').find('tbody').attr('data-url').split('=')[1].split('&')[0];
+                    let image = $('.sale-item-img img').attr('src');
+                    let name = $('.sale-item-img img').attr('alt');
+                    let page = $('.pagination .last').length ? $('.pagination .last a').attr('href').split('/S/')[1].split('.')[0] : 1;
+                    _c(null, typeId, image, name, page);
+                }
+            })
+        },
+        (_c) => {
+            FetchEvent({
+                url: _purchaseUrl,
+                callback: (data) => {
+                    let $ = cheerio.load(data.text);
+                    let typeId = $('#buy').find('tbody').attr('data-url').split('=')[1].split('&')[0];
+                    _c(null, typeId);
+                }
+            })
+        }
+    ], (err, result) => {
+        let [[saleID, image, name, page], purchaseID] = result;
+
+        callback && callback(null, {saleID: saleID, purchaseID: purchaseID, image: image, name: name, page: page});
+    })
+}
+
+exports.getFirstItem = function(id, type, callback) {
+    let _url = type == 'sale' ? _G.C5.saleUrl + '?id=' + id : _G.C5.purchaseUrl + '?id=' + id;
+    FetchEvent({
+        url: _url,
+        cookie: global.cookie,
+        callback: (data) => {
+            let _r = null,
+            json = eval('(' + data.text + ')');
+
+            if (json.status == 200) {
+                _r = json.body.items[0];
+            }
+
+            callback(null, _r);
         }
     })
 }
@@ -237,18 +293,7 @@ exports.GenerateTask = function({option, callback}) {
             break;
     }
 
-    global.TaskHash[option.task + option.id].init();
-
-    getItemInfo({
-        id: option.id,
-        callback: (img, name) => {
-            
-            global.TaskHash[option.task + option.id].img = img;
-            global.TaskHash[option.task + option.id].name = name;
-
-            callback && callback();
-        }
-    })
+    global.TaskHash[option.task + option.id].init(callback);
 }
 
 exports.CancelTask = function({task, callback}) {

@@ -8,6 +8,7 @@ let _G = require('./../base/global');
 let fetchLoginSystem = require('./../class/C5login');
 let searchSystem = require('./../class/Search');
 let Common = require('./../base/common');
+let async = require('async');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

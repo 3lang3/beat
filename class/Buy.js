@@ -17,20 +17,26 @@ class BuyClass {
         this.task = option.task;
         this.switch = null;
         this.name = null;
-        this.img = null;
+        this.image = null;
+        this.saleID = null;
     }
 
-    init() {
-        async.forever(
-            (next) => {
-                setTimeout(() => {
-                    this.flow();
-                    next(this.switch);
-                }, 5*1000);
-            }, (err) => {
-                console.log('Buy showdown: ', this.id);
-            }
-        );
+    init(callback) {
+        let timer;
+        this.getItemInfo(() => {
+            callback && callback();
+            async.forever(
+                (next) => {
+                    timer = setTimeout(() => {
+                        this.flow();
+                        next(this.switch);
+                    }, 5*1000);
+                }, (err) => {
+                    clearTimeout(timer);
+                    console.log('Buy showdown: ', this.id);
+                }
+            );
+        });
     }
 
     flow(callback) {
@@ -48,30 +54,40 @@ class BuyClass {
             callback && callback(null, result)
         })
     }
+    // 初始化item 基本信息 purchaseID, saleID, image, name
+    getItemInfo(callback) {
+        async.waterfall([
+            (_c) => {
+                Common.initInfoEvent(this.id, _c);
+            }
+        ], (err, result) => {
+            this.saleID = result.saleID;
+            this.image = result.image;
+            this.name = result.name;
+            callback && callback();
+        })
+    }
 
     getPageAndId(callback) {
         console.log('fetching: ', this.pageUrl, new Date());
-        let pageTotal, steamId;
+        let pageTotal;
 
         Common.FetchEvent({
             url: this.pageUrl,
             callback: (data) => {
                 let $ = cheerio.load(data.text);
-
                 pageTotal = $('.pagination .last').length ? $('.pagination .last a').attr('href').split('/S/')[1].split('.')[0] : 1;
-                steamId = $('#sale').find('tbody').attr('data-url').split('=')[1].split('&')[0];
-
-                callback(null, pageTotal, steamId);
+                callback(null, pageTotal);
             }
         })
     }
 
-    getItemAllPage(pageTotal, steamId, callback) {
+    getItemAllPage(pageTotal, callback) {
 
         if (pageTotal > 5) pageTotal = 4;
-
+        
         async.timesSeries(pageTotal, (n, next) => {
-            this.getItem(n, steamId, (err, result) => {
+            this.getItem(n, this.saleID, (err, result) => {
                 next(err, result);
             })
         }, (err, results) => {

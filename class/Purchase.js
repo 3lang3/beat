@@ -9,38 +9,42 @@ let _ = require('lodash');
 class PurchaseClass{
     constructor(option) {
         this.id = option.id;
-        this.time = option.time || 5;
+        this.time = option.time || 10;
         this.price = null;
         this.num = option.num || 1,
-        this.name = null;
         this.switch = null;
         this.task = option.task;
         this.name = null;
-        this.img = null;
+        this.image = null;
+        this.saleID = null;
+        this.purchaseID = null;
         this.maxPurchasePrice = false;
         this.count = 0;
     }
 
     // 初始化程序
-    init() {
+    init(callback) {
         let timer;
-        async.forever(
-            (next) => {
-                timer = setTimeout(() => {
-                    next(this.switch);
-                    this.flow();
-                }, this.time*1000);
-            }, (err) => {
-                clearTimeout(timer);
-                this.cancelFlow();
-            }
-        );
+        this.getItemInfo(() => {
+            callback && callback();
+            async.forever(
+                (next) => {
+                    timer = setTimeout(() => {
+                        next(this.switch);
+                        this.flow();
+                    }, this.time*1000);
+                }, (err) => {
+                    clearTimeout(timer);
+                    this.cancelFlow();
+                }
+            );
+        });
     }
     // 整合工作流
     flow(callback) {
         console.log('Purchase Item:', this.id, new Date());
         async.waterfall([
-            this.getSalePurchaseID.bind(this),
+            this.getItemFirstItem.bind(this),
             this.compareTypePrice.bind(this),
             this.findPurchaseFirstItem.bind(this),
             this.ifNeedCancelPurchase.bind(this),
@@ -63,20 +67,44 @@ class PurchaseClass{
 
         })
     }
-    // 获取当前item的 purchaseID 和 saleID
-    getSalePurchaseID(callback) {
-        Common.getItemTypePrice(this.id, callback);
+    // 初始化item 基本信息 purchaseID, saleID, image, name
+    getItemInfo(callback) {
+        async.waterfall([
+            (_c) => {
+                Common.initInfoEvent(this.id, _c);
+            }
+        ], (err, result) => {
+
+            this.saleID = result.saleID;
+            this.purchaseID = result.purchaseID;
+            this.image = result.image;
+            this.name = result.name;
+            callback && callback();
+        })
+    }
+
+    // 获取当前item 卖一和求一list
+    getItemFirstItem(callback) {
+        async.parallel([
+            (_c) => {
+                Common.getFirstItem(this.saleID, 'sale', _c);
+            },
+            (_c) => {
+                Common.getFirstItem(this.purchaseID, 'purchase', _c);
+            }
+        ], (err, result) => {
+            callback(null, result)
+        })
     }
     // 比较卖一价格和求一价格 同时判断当前求一是不是Admin
-    compareTypePrice(price, callback) {
-        let _price = price[1].num*1 || parseFloat(price[0]) * 0.75;
-        let myPrice = _price > 100 ? (price[1].num*1 + 0.1).toFixed(1) : (price[1].num*1 + 0.01).toFixed(2);
+    compareTypePrice(items, callback) {
+        let _price = items[1].price*1 || parseFloat(items[0].price) * 0.75;
+        let myPrice = _price > 100 ? (items[1].price*1 + 0.1).toFixed(1) : (items[1].price*1 + 0.01).toFixed(2);
         let result = true;
 
-        this.price = ( myPrice >= parseFloat(price[0]) ) ? _price : myPrice;
-        this.name = price[1].name;
+        this.price = ( myPrice >= parseFloat(items[0].price) ) ? _price : myPrice;
 
-        if( price[1].isAuthor || this.maxPurchasePrice ) result = false;
+        if( items[1].owner.id == _G.User.id || this.maxPurchasePrice ) result = false;
 
         if(this.price == _price) {
             this.maxPurchasePrice = true;
@@ -145,7 +173,7 @@ class PurchaseClass{
     cancelPurchase(id, callback) {
 
         if(this.count >= 2) {
-            return this.reduceCount(callback);
+            return callback(null, null);
         }
 
         Common.FetchEvent({
