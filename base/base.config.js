@@ -11,7 +11,8 @@ exports.C5 = {
     purchaseList: 'https://www.c5game.com/user/purchase/index.html',
     purchaseCancel: 'https://www.c5game.com/api/purchase/cancel.html',
     inventoryList: 'https://www.c5game.com/user/inventory.html',
-    quickUrl: 'https://www.c5game.com/user/sell/quick.html?appid=570'
+    quickUrl: 'https://www.c5game.com/user/sell/quick.html?appid=570',
+    onsaleUrl: 'https://www.c5game.com/api/sell/onsale.html?appid=570'
 };
 
 exports.Time = {
@@ -36,3 +37,6 @@ exports.GemFilter = ['永恒矩阵', '远行之宝', '安详荣耀', '亡冬之�
 global.cookie = null;
 
 global.TaskHash = {};
+
+global.PurchaseSaleSwitch = false;
+global.PurchaseSale = null;

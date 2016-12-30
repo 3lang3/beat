@@ -9,7 +9,7 @@ let _ = require('lodash');
 class PurchaseClass{
     constructor(option) {
         this.id = option.id;
-        this.time = option.time || 10;
+        this.time = option.time || 30;
         this.price = null;
         this.num = option.num || 1,
         this.switch = null;
@@ -18,6 +18,8 @@ class PurchaseClass{
         this.image = null;
         this.saleID = null;
         this.purchaseID = null;
+        this.firstSale = null;
+        this.firstPurchase = null;
         this.maxPurchasePrice = false;
         this.count = 0;
     }
@@ -42,7 +44,7 @@ class PurchaseClass{
     }
     // 整合工作流
     flow(callback) {
-        console.log('Purchase Item:', this.id, new Date());
+        console.log('Purchase Item:', this.name, this.id, new Date());
         async.waterfall([
             this.getItemFirstItem.bind(this),
             this.compareTypePrice.bind(this),
@@ -98,6 +100,9 @@ class PurchaseClass{
     }
     // 比较卖一价格和求一价格 同时判断当前求一是不是Admin
     compareTypePrice(items, callback) {
+        this.firstSale = items[0];
+        this.firstPurchase = items[1];
+        
         let _price = items[1].price*1 || parseFloat(items[0].price) * 0.75;
         let myPrice = _price > 100 ? (items[1].price*1 + 0.1).toFixed(1) : (items[1].price*1 + 0.01).toFixed(2);
         let result = true;
@@ -166,7 +171,8 @@ class PurchaseClass{
     }
 
     ifNeedCancelPurchase(obj, callback) {
-        if(obj == null || obj == false || this.count >= 2) return callback(null, null);
+        if(obj == null || obj == false) return callback(null, null);
+        if(this.count >= 2) return callback(null, true);
         this.cancelPurchase(obj, callback);
     }
 
@@ -189,7 +195,7 @@ class PurchaseClass{
                     this.count++;
                     this.reduceCount()
                 }
-                console.log('取消求购', JSON.parse(data.text), this.count)
+                console.log('取消求购', this.name, JSON.parse(data.text), this.count)
                 callback && callback(null, true);
             }
         })
@@ -209,7 +215,7 @@ class PurchaseClass{
                 delivery: 'on'
             },
             callback: (data) => {
-                console.log('发布求购: ', JSON.parse(data.text))
+                console.log('发布求购: ', this.name, JSON.parse(data.text))
                 callback && callback(null, true);
             }
         })
@@ -219,48 +225,6 @@ class PurchaseClass{
         setTimeout(() => {
             this.count--;
         }, 60*60*1000)
-    }
-
-    inventoryAutoSaleIds(callback) {
-        let saleNames = [], saleIds = [];
-        _.map(global.TaskHash, (task) => {
-            if(task.task == 'purchase') {
-                saleNames.push(task.name);
-            }
-        });
-
-        Common.FetchEvent({
-            url: _G.C5.inventoryList,
-            cookie: global.cookie,
-            callback: (data) => {
-                let $ = cheerio.load(data.text);
-                $('#inventory-item-form li.item').each((i, el) => {
-                    saleNames.map((name) => {
-                        if($(el).find(img).attr('alt') == name ) {
-                            saleIds.push($(el).find('input[name="id[]"]').val());
-                        }
-                    })
-                })
-
-                callback(null, saleIds);
-            }
-        })
-    }
-
-    inventoryAutoSale(saleIds, callback) {
-        superagent
-            .post(_G.C5.quickUrl)
-            .type('form')
-            .set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
-            .set('Cookie', global.cookie)
-            .set('Accept-Language', 'zh-CN,zh')
-            .field({
-                'id[]': saleIds
-            })
-            .end((err, data) => {
-                let $ = cheerio.load(data.text, {decodeEntities: false});
-                
-            })
     }
 }
 

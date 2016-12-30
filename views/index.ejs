@@ -23,8 +23,8 @@
                 <a style="margin-left:20px;" href="#!" class="brand-logo">DOTA2FETCH</a>
                 <ul class="right hide-on-med-and-down">
                     <li><a href="#"><i class="material-icons">search</i></a></li>
-                    <li><a href="javascript:;" @click="loginC5"><i v-bind:class="[isLogged ? 'lime-text' : '', 'material-icons']">wifi</i></a></li>
-                    <li><a href="#"><i class="material-icons">refresh</i></a></li>
+                    <li><a href="javascript:;" @click="loginC5"><i :class="[isLogged ? 'lime-text' : '', 'material-icons']">wifi</i></a></li>
+                    <li><a href="javascript:;" @click="purchaseSale"><i :class="[isPurchaseSale ? 'lime-text' : '', 'material-icons']">refresh</i></a></li>
                     <li>
                         SearchType:
                         <input v-model="typeSearch" type="radio" value="Item" id="test1" />
@@ -180,6 +180,7 @@
                     option: {}
                 },
                 isLogged: false,
+                isPurchaseSale: false,
                 typeSearch: 'Item',
             },
             created: function() {
@@ -198,6 +199,17 @@
                     $.get('/login', function(res) {
                         console.log(res);
                         if (res.status == 'success') _this.isLogged = true;
+                    })
+                },
+                purchaseSale: function() {
+                    var _this = this;
+                    $.get('/purchaseSale', function(res) {
+                        console.log(res);
+                        if (res.status == 'success'){
+                            _this.isPurchaseSale = true
+                        }else {
+                            _this.isPurchaseSale = false
+                        };
                     })
                 },
                 searchSubmit: function(word) {
