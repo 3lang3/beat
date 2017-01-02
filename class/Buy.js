@@ -22,18 +22,16 @@ class BuyClass {
     }
 
     init(callback) {
-        let timer;
+
         this.getItemInfo(() => {
             callback && callback();
             async.forever(
                 (next) => {
-                    timer = setTimeout(() => {
-                        this.flow();
-                        next(this.switch);
-                    }, 5*1000);
+                    this.flow(() => {
+                        setTimeout(() => next(this.switch) , _G.Time.fetchInterval);
+                    });
                 }, (err) => {
-                    clearTimeout(timer);
-                    console.log('Buy showdown: ', this.id);
+                    console.log('Buy showdown: ', this.name, this.id);
                 }
             );
         });
@@ -48,7 +46,7 @@ class BuyClass {
             if (err) console.log('waterfall results err');
             if(result.length > 0) {
                 async.mapLimit(result, 1, Common.C5Payment, (err, result) => {
-
+                    
                 })
             }
             callback && callback(null, result)
@@ -69,7 +67,7 @@ class BuyClass {
     }
 
     getPageAndId(callback) {
-        console.log('fetching: ', this.pageUrl, new Date());
+        console.log('fetching: ', this.pageUrl, new Date(), this.name);
         let pageTotal;
 
         Common.FetchEvent({
@@ -150,7 +148,7 @@ class BuyClass {
                     _c(null, item);
                 }
             },
-            // 筛选具体宝石
+            // 筛选具体宝石类型
             (item, _c) => {
                 if(_.isNull(item)) return _c(null, null);
                 if(this.type) {
@@ -190,7 +188,13 @@ class BuyClass {
                         }
                     })
                 }else {
-                    if(item.gem.gem_style.join('').indexOf('远行之宝') > -1) {
+                    let target = true;
+                    item.gem.gem_style.map(n => {
+                        _G.GemFilter.map(m => {
+                            if(n.indexOf(m) > -1) target = false;
+                        })
+                    })
+                    if(!target) {
                         _c(null, null);
                     }else {
                         _c(null, item);

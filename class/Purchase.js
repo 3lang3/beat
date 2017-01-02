@@ -9,7 +9,7 @@ let _ = require('lodash');
 class PurchaseClass{
     constructor(option) {
         this.id = option.id;
-        this.time = option.time || 30;
+        this.time = option.time || 1;
         this.price = null;
         this.num = option.num || 1,
         this.switch = null;
@@ -26,17 +26,14 @@ class PurchaseClass{
 
     // 初始化程序
     init(callback) {
-        let timer;
         this.getItemInfo(() => {
             callback && callback();
             async.forever(
                 (next) => {
-                    timer = setTimeout(() => {
-                        next(this.switch);
-                        this.flow();
-                    }, this.time*1000);
+                    this.flow(() => {
+                        setTimeout(() => next(this.switch), this.time * 60 * 1000);
+                    });
                 }, (err) => {
-                    clearTimeout(timer);
                     this.cancelFlow();
                 }
             );
@@ -56,7 +53,7 @@ class PurchaseClass{
             callback && callback(null, result)
         })
     }
-    // 整合取消求购工作流
+    // 整合取消求购流
     cancelFlow(callback) {
         async.waterfall([
             (_c) => {

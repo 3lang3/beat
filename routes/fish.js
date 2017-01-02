@@ -24,7 +24,7 @@ router.post('/', (req, res, next) => {
                 url: _G.C5.baseUrl + 'dota/' + req.body.id + '/S.html',
                 callback: (data) => {
                     let $ = cheerio.load(data.text);
-                    let title = $('.sale-item').find('.name').text() || undefined;
+                    let title = $('.sale-item').find('.imgs img').attr('alt') || undefined;
                     let img = $('.sale-item').find('.imgs img').attr('src') || undefined;
 
                     let newFish = new Fish({

@@ -16,7 +16,7 @@ exports.C5 = {
 };
 
 exports.Time = {
-    fetchInterval: 5000
+    fetchInterval: 3000
 }
 
 exports.FetchOption = {
@@ -40,3 +40,5 @@ global.TaskHash = {};
 
 global.PurchaseSaleSwitch = false;
 global.PurchaseSale = null;
+
+global.UserList = {};

@@ -7,6 +7,7 @@ let _ = require('lodash');
 let _G = require('./base.config');
 let PurchaseClass = require('./../class/Purchase');
 let BuyClass = require('./../class/Buy');
+let SendMail = require('./../class/Mail');
 
 // 
 function getItemTypeIdEvent(itemId, type, callback) {
@@ -200,14 +201,14 @@ function FetchEvent({url, type, data, callback, cookie}) {
             .set('Accept-Language', 'zh-CN,zh')
             .send(data)
             .timeout(5000)
-            .end((err, data) => {
+            .end((err, datas) => {
                 if (err) {
                     console.log(url, 'call again!');
                     return setTimeout(() => {
                         FetchEvent({url, type, data, callback, cookie})
                     }, 2000);
                 }
-                callback && callback(data);
+                callback && callback(datas);
             })
     }else {
         superagent
@@ -217,14 +218,14 @@ function FetchEvent({url, type, data, callback, cookie}) {
             .set('Accept-Language', 'zh-CN,zh')    
             .send(data)
             .timeout(5000)
-            .end((err, data) => {
+            .end((err, datas) => {
                 if (err) {
-                    console.log(url,  'call again!');
+                    console.log(url, 'call again!');
                     return setTimeout(() => {
                         FetchEvent({url, type, data, callback, cookie})
                     }, 2000);
                 }
-                callback && callback(data);
+                callback && callback(datas);
             })
     }
 }
@@ -261,10 +262,13 @@ exports.C5Payment = function(item, callback) {
         url: _G.C5.paymentUrl + '?id=' + item.id,
         type: 'post',
         callback: (data) => {
-
             let json = JSON.parse(data.text);
             console.log(json);
             callback(null, json);
+            if(json.status == 200) {
+                let _html = '<h1>'+item.name+'</h1>' + item.gem.gem_style.join(';');
+                SendMail(_html);
+            }
         }
     })
 }
