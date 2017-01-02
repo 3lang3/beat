@@ -22,7 +22,7 @@
                 <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
                 <a style="margin-left:20px;" href="#!" class="brand-logo">DOTA2FETCH</a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="#"><i class="material-icons">search</i></a></li>
+                    <li><a href="javascript:;" @click="activeAllFish"><i class="material-icons">search</i></a></li>
                     <li><a href="javascript:;" @click="loginC5"><i :class="[isLogged ? 'lime-text' : '', 'material-icons']">wifi</i></a></li>
                     <li><a href="javascript:;" @click="purchaseSale"><i :class="[isPurchaseSale ? 'lime-text' : '', 'material-icons']">refresh</i></a></li>
                     <li>
@@ -259,7 +259,7 @@
                 },
                 activeAllFish: function(){
                     var _this = this;
-                    async.mapLimit(_this.fishList, 1, function(fish) {
+                    async.mapLimit(_this.fishList, 1, function(fish, callback) {
                         $.post('/generateTask', fish.option, function(){
                             setTimeout(function() {
                                 callback(null, null);
