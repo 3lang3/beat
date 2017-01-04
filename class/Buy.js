@@ -19,6 +19,7 @@ class BuyClass {
         this.name = null;
         this.image = null;
         this.saleID = null;
+        this.only = option.only || null;
     }
 
     init(callback) {
@@ -28,7 +29,11 @@ class BuyClass {
             async.forever(
                 (next) => {
                     this.flow(() => {
-                        setTimeout(() => next(this.switch) , _G.Time.fetchInterval);
+                        if(this.only) {
+                            next(this.switch);
+                        }else {
+                            setTimeout(() => next(this.switch) , _G.Time.fetchInterval);
+                        }
                     });
                 }, (err) => {
                     console.log('Buy showdown: ', this.name, this.id);
@@ -69,7 +74,7 @@ class BuyClass {
     getPageAndId(callback) {
         console.log('fetching: ', this.pageUrl, new Date(), this.name);
         let pageTotal;
-
+        if(this.only) return callback(null, 1);
         Common.FetchEvent({
             url: this.pageUrl,
             callback: (data) => {
@@ -82,7 +87,7 @@ class BuyClass {
 
     getItemAllPage(pageTotal, callback) {
 
-        if (pageTotal > 5) pageTotal = 4;
+        // if (pageTotal > 6) pageTotal = 5;
         
         async.timesSeries(pageTotal, (n, next) => {
             this.getItem(n, this.saleID, (err, result) => {
@@ -188,13 +193,7 @@ class BuyClass {
                         }
                     })
                 }else {
-                    let target = true;
-                    item.gem.gem_style.map(n => {
-                        _G.GemFilter.map(m => {
-                            if(n.indexOf(m) > -1) target = false;
-                        })
-                    })
-                    if(!target) {
+                    if(item.gem.gem_style.join('').indexOf('远行之宝') > -1 ) {
                         _c(null, null);
                     }else {
                         _c(null, item);

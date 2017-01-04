@@ -64,10 +64,16 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col s2">
+                    <div class="col s1">
                         <div class="input-field col s12">
                             <input id="Detail" type="text" name="detail" class="validate">
                             <label for="Detail">Detail</label>
+                        </div>
+                    </div>  
+                    <div class="col s1">
+                        <div class="input-field col s12">
+                            <input type="checkbox" name="only" id="test5" />
+                            <label for="test5">Only</label>
                         </div>
                     </div>
                     <div class="col s2">
@@ -263,7 +269,7 @@
                         $.post('/generateTask', fish.option, function(){
                             setTimeout(function() {
                                 callback(null, null);
-                            }, 1000)
+                            }, 1800)
                         });
                     }, function(err, result) {
                         _this.getTaskList();

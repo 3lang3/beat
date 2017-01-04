@@ -98,10 +98,10 @@ class PurchaseClass{
     // 比较卖一价格和求一价格 同时判断当前求一是不是Admin
     compareTypePrice(items, callback) {
         this.firstSale = items[0];
-        this.firstPurchase = items[1];
+        this.firstPurchase = items[1] || this.firstSale;
         
-        let _price = items[1].price*1 || parseFloat(items[0].price) * 0.75;
-        let myPrice = _price > 100 ? (items[1].price*1 + 0.1).toFixed(1) : (items[1].price*1 + 0.01).toFixed(2);
+        let _price = items[1].price*1 || parseFloat(items[0].price) * 0.8;
+        let myPrice = _price > 100 ? (_price + 0.1).toFixed(1) : (_price + 0.01).toFixed(2);
         let result = true;
 
         this.price = ( myPrice >= parseFloat(items[0].price) ) ? _price : myPrice;

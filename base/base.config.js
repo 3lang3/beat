@@ -16,7 +16,7 @@ exports.C5 = {
 };
 
 exports.Time = {
-    fetchInterval: 3000
+    fetchInterval: 0
 }
 
 exports.FetchOption = {
