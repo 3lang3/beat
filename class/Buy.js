@@ -40,7 +40,7 @@ class BuyClass {
                     (next) => {
                         this.flowSecond(() => setTimeout(() => next(this.switch) , _G.Time.fetchInterval));
                     }, (err) => {
-                        console.log('Buy showdown: ', this.name, this.id);
+                        console.log('Buy showdown: ', this.name, this.id, 'Second!!!');
                     }
                 );
             }else {
