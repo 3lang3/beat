@@ -12,11 +12,13 @@ exports.C5 = {
     purchaseCancel: 'https://www.c5game.com/api/purchase/cancel.html',
     inventoryList: 'https://www.c5game.com/user/inventory.html',
     quickUrl: 'https://www.c5game.com/user/sell/quick.html?appid=570',
-    onsaleUrl: 'https://www.c5game.com/api/sell/onsale.html?appid=570'
+    onsaleUrl: 'https://www.c5game.com/api/sell/onsale.html?appid=570',
+    courierUrl: 'https://www.c5game.com/dota.html?only=on&quality=unusual&type=courier',
+    effectUrl: 'https://www.c5game.com/dota.html?only=on&type=socket_gem'
 };
 
 exports.Time = {
-    fetchInterval: 0
+    fetchInterval: 2000
 }
 
 exports.FetchOption = {

@@ -3,7 +3,18 @@
 /**
  * Module dependencies.
  */
+
 process.binding('http_parser').HTTPParser = require('http-parser-js').HTTPParser;
+var SendMail = require('./../class/Mail');
+// process.on('uncaughtException', function (err) {
+//   SendMail(err + '<br/>' + err.stack);
+// });
+
+// process.on('exit', function () {
+// 　　SendMail('process down!');
+// });
+
+
 var app = require('../app');
 var debug = require('debug')('t:server');
 var http = require('http');

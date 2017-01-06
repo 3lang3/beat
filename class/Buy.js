@@ -26,19 +26,32 @@ class BuyClass {
 
         this.getItemInfo(() => {
             callback && callback();
-            async.forever(
-                (next) => {
-                    this.flow(() => {
-                        if(this.only) {
-                            next(this.switch);
-                        }else {
-                            setTimeout(() => next(this.switch) , _G.Time.fetchInterval);
-                        }
-                    });
-                }, (err) => {
-                    console.log('Buy showdown: ', this.name, this.id);
-                }
-            );
+            if(this.only) {
+                // page 1
+                async.forever(
+                    (next) => {
+                        this.flow(() => next(this.switch));
+                    }, (err) => {
+                        console.log('Buy showdown: ', this.name, this.id);
+                    }
+                );
+                // page >= 2
+                async.forever(
+                    (next) => {
+                        this.flowSecond(() => setTimeout(() => next(this.switch) , _G.Time.fetchInterval));
+                    }, (err) => {
+                        console.log('Buy showdown: ', this.name, this.id);
+                    }
+                );
+            }else {
+                async.forever(
+                    (next) => {
+                        this.flow(() => setTimeout(() => next(this.switch) , _G.Time.fetchInterval));
+                    }, (err) => {
+                        console.log('Buy showdown: ', this.name, this.id);
+                    }
+                );
+            }
         });
     }
 
@@ -46,6 +59,21 @@ class BuyClass {
         async.waterfall([
             this.getPageAndId.bind(this),
             this.getItemAllPage.bind(this),
+            this.getItemDetail.bind(this)
+        ], (err, result) => {
+            if (err) console.log('waterfall results err');
+            if(result.length > 0) {
+                async.mapLimit(result, 1, Common.C5Payment, (err, result) => {
+                    
+                })
+            }
+            callback && callback(null, result)
+        })
+    }
+    flowSecond(callback) {
+        async.waterfall([
+            this.getPageAndIdSecond.bind(this),
+            this.getItemAllPageSecond.bind(this),
             this.getItemDetail.bind(this)
         ], (err, result) => {
             if (err) console.log('waterfall results err');
@@ -85,11 +113,35 @@ class BuyClass {
         })
     }
 
-    getItemAllPage(pageTotal, callback) {
+    getPageAndIdSecond(callback) {
+        console.log('fetching: ', this.pageUrl, new Date(), this.name, 'Second!!!!!');
+        let pageTotal;
+        Common.FetchEvent({
+            url: this.pageUrl,
+            callback: (data) => {
+                let $ = cheerio.load(data.text);
+                pageTotal = $('.pagination .last').length ? $('.pagination .last a').attr('href').split('/S/')[1].split('.')[0] : 1;
+                callback(null, pageTotal);
+            }
+        })
+    }
 
+    getItemAllPage(pageTotal, callback) {
         // if (pageTotal > 6) pageTotal = 5;
-        
         async.timesSeries(pageTotal, (n, next) => {
+            this.getItem(n, this.saleID, (err, result) => {
+                next(err, result);
+            })
+        }, (err, results) => {
+            if (err) console.log(err);
+            callback(null, _.flatten(results))
+        });
+    }
+
+    getItemAllPageSecond(pageTotal, callback) {
+        // if (pageTotal > 6) pageTotal = 5;
+        async.timesSeries(pageTotal, (n, next) => {
+            if (n === 0) return next(null, []);
             this.getItem(n, this.saleID, (err, result) => {
                 next(err, result);
             })
@@ -105,7 +157,7 @@ class BuyClass {
             callback(null, _.filter(results, (r) => r !== null))
         })
     }
-
+    
     getItem(page, steamId, callback) {
         let _page = page + 1;
         let _url = _G.C5.saleUrl + '?id=' + steamId + '&page=' + _page;

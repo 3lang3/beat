@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="/stylesheets/materialize.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+    <div id="app">
+     <nav class="nav-extended indigo">
+        <div class="nav-wrapper">
+        <a href="#" class="brand-logo"><i class="material-icons md-48">bubble_chart</i></a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="#"><i class="material-icons">power_settings_new</i></a></li>
+            <li><a href="#"><i class="material-icons">person</i></a></li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
+            <li><a href="#">Sass</a></li>
+            <li><a href="#">Components</a></li>
+            <li><a href="#">JavaScript</a></li>
+        </ul>
+
+        <ul class="tabs tabs-transparent">
+            <li class="tab"><a href="#HomeTab">Home</a></li>
+            <li class="tab"><a class="active" href="#BuyTab">Buy</a></li>
+            <li class="tab"><a href="#PurchaseTab">Purchase</a></li>
+            <li class="tab"><a href="#CourierTab">Courier</a></li>
+            <li class="tab"><a href="#SettingTab">Setting</a></li>
+        </ul>
+        </div>
+    </nav>
+    <div id="HomeTab" class="col s12">
+        <div class="section grey lighten-5">
+            <div class="row items">
+                <div class="col s2">
+                    <div class="card ">
+                        <span class="new badge blue" data-badge-caption=" rmb">Sell: 13.48</span>
+                        <span class="new badge red" data-badge-caption=" rmb">Purchase: 12.50</span>
+                        <div class="card-image">
+                            <img class="item" src="https://i.c5game.com/economy/570/2016/07/16/496eefeb8bdb02abc8367e8f450011e0.png">
+                        <span class="card-title">荣光红服</span>
+                        </div>
+                        <div class="card-content">
+                        <p>
+                            <i class="material-icons">shopping_cart</i><b>213</b> Remaining For Sale<br/>
+                            <i class="material-icons">favorite</i><b>14</b> Purchase order<br/>
+                            <i class="material-icons">sync</i><b>411</b> Buy Orders Placed
+                            <span>Market: 200 ~ 400 rmb</span>
+                        </p>
+                        </div>
+                        <div class="card-action">
+                        <a href="#">Remove</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s2">
+                    <div class="card ">
+                        <span class="new badge blue" data-badge-caption=" rmb">卖一价: 13.48</span>
+                        <span class="new badge red" data-badge-caption=" rmb">求一价: 12.50</span>
+                        <div class="card-image">
+                            <img class="item" src="https://i.c5game.com/economy/570/2016/07/16/496eefeb8bdb02abc8367e8f450011e0.png">
+                            <span class="card-title">荣光红服</span>
+                        </div>
+                        <div class="card-content">
+                        <p>
+                            <i class="material-icons">shopping_cart</i><b>213</b> Remaining For Sale<br/>
+                            <i class="material-icons">favorite</i><b>14</b> Purchase order<br/>
+                            <i class="material-icons">sync</i><b>411</b> Buy Orders Placed
+                            <span>Market: 200 ~ 400 rmb</span>
+                        </p>
+                        </div>
+                        <div class="card-action">
+                            <a href="#">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="BuyTab" class="col s12">
+        <div class="row pbt20 mb0 grey lighten-3">
+            <div class="col s8 offset-s2 card mb0 shadow-soft">
+                <form id="buyForm">
+                    <div class="col s2">
+                        <input type="hidden" name="task" value="buy" />
+                        <div class="input-field col s12">
+                            <input id="itemID" type="text" class="validate" name="id">
+                            <label for="itemID">Item ID</label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <input id="maxPrice" type="text" class="validate" name="price">
+                            <label for="maxPrice">Price</label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <select multiple name="type">
+                                <option value="" disabled selected>Gem Type</option>
+                                <option value="effect">Effect</option>
+                                <option value="color">Color</option>
+                                <option value="animation">Animation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div class="input-field col s12">
+                            <input id="Detail" type="text" name="detail" class="validate">
+                            <label for="Detail">Detail</label>
+                        </div>
+                    </div>  
+                    <div class="col s1">
+                        <div class="input-field col s12">
+                            <input type="checkbox" name="only" id="Only" />
+                            <label for="Only">Only</label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="input-field col s12 right-align">
+                            <button class="waves-effect waves-orange btn-flat" @click.prevent="addFish('#buyForm')">Add</button>                        
+                            <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#buyForm')">Fetch</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="section grey lighten-5">
+            <div class="row fishList">
+                <div class="col s3">
+                    <div class="chip">
+                        <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
+                        <h5> 血根护体</h5>
+                        <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
+                </div>
+                <div class="col s3">
+                    <div class="chip">
+                        <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
+                        <h5> 血根护体</h5>
+                        <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
+                </div>
+                <div class="col s3">
+                    <div class="chip">
+                        <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
+                        <h5> 血根护体</h5>
+                        <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
+                </div>
+                <div class="col s3">
+                    <div class="chip">
+                        <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
+                        <h5> 血根护体</h5>
+                        <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="PurchaseTab" class="col s12">PurchaseTab</div>
+    <div id="CourierTab" class="col s12">CourierTab</div>
+    <div id="SettingTab" class="col s12">SettingTab</div>
+    </div>
+<body>
+    <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/async.min.js"></script>
+    <script src="/javascripts/lodash.min.js"></script>
+    <script src="/javascripts/materialize.min.js"></script>
+    <script src="/javascripts/vue.js"></script>
+    <script>
+        $(function(){
+           $('select').material_select();
+        })
+    </script>
+</body>
+
+</html>

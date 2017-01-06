@@ -9,7 +9,8 @@ let PurchaseClass = require('./../class/Purchase');
 let BuyClass = require('./../class/Buy');
 let SendMail = require('./../class/Mail');
 
-// 
+// clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+
 function getItemTypeIdEvent(itemId, type, callback) {
     let _urlType = type == 'sale' ? '/S.html' : '/P.html',
         _url = _G.C5.baseUrl + 'dota/' + itemId + _urlType,
@@ -28,7 +29,7 @@ function getItemTypeIdEvent(itemId, type, callback) {
     })
 }
 
-exports.initInfoEvent = function(itemId, callback) {
+exports.initInfoEvent = function(itemId, callback, onlySale) {
     let _saleUrl = _G.C5.baseUrl + 'dota/' + itemId + '/S.html',
         _purchaseUrl = _G.C5.baseUrl + 'dota/' + itemId + '/P.html';
 
@@ -37,12 +38,16 @@ exports.initInfoEvent = function(itemId, callback) {
             FetchEvent({
                 url: _saleUrl,
                 callback: (data) => {
-                    let $ = cheerio.load(data.text);
-                    let typeId = $('#sale').find('tbody').attr('data-url').split('=')[1].split('&')[0];
-                    let image = $('.sale-item-img img').attr('src');
-                    let name = $('.sale-item-img img').attr('alt');
-                    let page = $('.pagination .last').length ? $('.pagination .last a').attr('href').split('/S/')[1].split('.')[0] : 1;
-                    _c(null, typeId, image, name, page);
+                    let $ = cheerio.load(data.text),
+                    typeId = $('#sale').find('tbody').attr('data-url').split('=')[1].split('&')[0],
+                    image = $('.sale-item-img img').attr('src'),
+                    name = $('.sale-item-img img').attr('alt'),
+                    saleNumber = $('.sale-item-num').text().replace(/[^0-9]/ig, ""),
+                    saling = $('li[role="presentation"]').eq(0).text().replace(/[^0-9]/ig, ""),
+                    purchasing = $('li[role="presentation"]').eq(1).text().replace(/[^0-9]/ig, ""),
+                    marketPrice = $('.hero span').eq(0).text().split(':')[1];
+
+                    _c(null, typeId, image, name, saleNumber, saling, purchasing, marketPrice);
                 }
             })
         },
@@ -57,9 +62,9 @@ exports.initInfoEvent = function(itemId, callback) {
             })
         }
     ], (err, result) => {
-        let [[saleID, image, name, page], purchaseID] = result;
+        let [[saleID, image, name, saleNumber, saling, purchasing, marketPrice], purchaseID] = result;
 
-        callback && callback(null, {saleID: saleID, purchaseID: purchaseID, image: image, name: name, page: page});
+        callback && callback(null, {saleID: saleID, purchaseID: purchaseID, image: image, name: name, saleNumber: saleNumber, saling: saling, purchasing: purchasing, marketPrice: marketPrice});
     })
 }
 
@@ -220,7 +225,7 @@ function FetchEvent({url, type, data, callback, cookie}) {
             .timeout(5000)
             .end((err, datas) => {
                 if (err) {
-                    console.log(url, 'call again!');
+                    console.log(url, 'call again!', err);
                     return setTimeout(() => {
                         FetchEvent({url, type, data, callback, cookie})
                     }, 2000);

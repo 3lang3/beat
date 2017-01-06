@@ -5,8 +5,7 @@ var _G = require('./../base/global');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
 
-  console.log(_G.cookie)
-  res.send('respond with a resource');
+  res.render('new', { title: 'Express' });
 });
 
 module.exports = router;
