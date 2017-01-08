@@ -20,6 +20,10 @@ class PurchaseClass{
         this.purchaseID = null;
         this.firstSale = null;
         this.firstPurchase = null;
+        this.marketPrice = null;
+        this.saleNumber = null;
+        this.saling = null;
+        this.purchasing = null;
         this.maxPurchasePrice = false;
         this.count = 0;
     }
@@ -78,6 +82,11 @@ class PurchaseClass{
             this.purchaseID = result.purchaseID;
             this.image = result.image;
             this.name = result.name;
+            this.marketPrice = result.marketPrice;
+            this.saleNumber = result.saleNumber;
+            this.saling = result.saling;
+            this.purchasing = result.purchasing;
+            
             callback && callback();
         })
     }

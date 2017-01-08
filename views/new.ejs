@@ -14,158 +14,205 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
     <div id="app">
-     <nav class="nav-extended indigo">
-        <div class="nav-wrapper">
-        <a href="#" class="brand-logo"><i class="material-icons md-48">bubble_chart</i></a>
-        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="#"><i class="material-icons">power_settings_new</i></a></li>
-            <li><a href="#"><i class="material-icons">person</i></a></li>
-        </ul>
-        <ul class="side-nav" id="mobile-demo">
-            <li><a href="#">Sass</a></li>
-            <li><a href="#">Components</a></li>
-            <li><a href="#">JavaScript</a></li>
-        </ul>
+        <nav class="nav-extended indigo">
+            <div class="nav-wrapper">
+            <a href="#" class="brand-logo"><i class="material-icons md-48">bubble_chart</i></a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="#"><i class="material-icons">power_settings_new</i></a></li>
+                <li><a href="#"><i class="material-icons">person</i></a></li>
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                <li><a href="#">Sass</a></li>
+                <li><a href="#">Components</a></li>
+                <li><a href="#">JavaScript</a></li>
+            </ul>
 
-        <ul class="tabs tabs-transparent">
-            <li class="tab"><a href="#HomeTab">Home</a></li>
-            <li class="tab"><a class="active" href="#BuyTab">Buy</a></li>
-            <li class="tab"><a href="#PurchaseTab">Purchase</a></li>
-            <li class="tab"><a href="#CourierTab">Courier</a></li>
-            <li class="tab"><a href="#SettingTab">Setting</a></li>
-        </ul>
-        </div>
-    </nav>
-    <div id="HomeTab" class="col s12">
-        <div class="section grey lighten-5">
-            <div class="row items">
-                <div class="col s2">
-                    <div class="card ">
-                        <span class="new badge blue" data-badge-caption=" rmb">Sell: 13.48</span>
-                        <span class="new badge red" data-badge-caption=" rmb">Purchase: 12.50</span>
-                        <div class="card-image">
-                            <img class="item" src="https://i.c5game.com/economy/570/2016/07/16/496eefeb8bdb02abc8367e8f450011e0.png">
-                        <span class="card-title">荣光红服</span>
-                        </div>
-                        <div class="card-content">
-                        <p>
-                            <i class="material-icons">shopping_cart</i><b>213</b> Remaining For Sale<br/>
-                            <i class="material-icons">favorite</i><b>14</b> Purchase order<br/>
-                            <i class="material-icons">sync</i><b>411</b> Buy Orders Placed
-                            <span>Market: 200 ~ 400 rmb</span>
-                        </p>
-                        </div>
-                        <div class="card-action">
-                        <a href="#">Remove</a>
+            <ul class="tabs tabs-transparent">
+                <li class="tab"><a href="#HomeTab">Home</a></li>
+                <li class="tab"><a class="active" href="#BuyTab">Buy</a></li>
+                <li class="tab"><a href="#PurchaseTab">Purchase</a></li>
+                <li class="tab"><a href="#CourierTab">Courier</a></li>
+                <li class="tab"><a href="#SettingTab">Setting</a></li>
+            </ul>
+            </div>
+        </nav>
+        <div id="HomeTab" class="col s12">
+            <div class="section grey lighten-5">
+                <div class="row items" style="width: 1400px;">
+                    <div class="col s2">
+                        <div class="card ">
+                            <span class="new badge blue" data-badge-caption=" rmb">卖一价: 13.48</span>
+                            <span class="new badge red" data-badge-caption=" rmb">求一价: 12.50</span>
+                            <div class="card-image">
+                                <img class="item" src="https://i.c5game.com/economy/570/2016/07/16/496eefeb8bdb02abc8367e8f450011e0.png">
+                                <span class="card-title">荣光红服</span>
+                            </div>
+                            <div class="card-content">
+                            <p>
+                                <i class="material-icons">shopping_cart</i><b>213</b> for sale<br/>
+                                <i class="material-icons">favorite</i><b>14</b> for purchase<br/>
+                                <i class="material-icons">sync</i><b>411</b> Sold out
+                                <span>Market: 200 ~ 400 rmb</span>
+                            </p>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">Remove</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col s2">
-                    <div class="card ">
-                        <span class="new badge blue" data-badge-caption=" rmb">卖一价: 13.48</span>
-                        <span class="new badge red" data-badge-caption=" rmb">求一价: 12.50</span>
-                        <div class="card-image">
-                            <img class="item" src="https://i.c5game.com/economy/570/2016/07/16/496eefeb8bdb02abc8367e8f450011e0.png">
-                            <span class="card-title">荣光红服</span>
-                        </div>
-                        <div class="card-content">
-                        <p>
-                            <i class="material-icons">shopping_cart</i><b>213</b> Remaining For Sale<br/>
-                            <i class="material-icons">favorite</i><b>14</b> Purchase order<br/>
-                            <i class="material-icons">sync</i><b>411</b> Buy Orders Placed
-                            <span>Market: 200 ~ 400 rmb</span>
-                        </p>
-                        </div>
-                        <div class="card-action">
-                            <a href="#">Remove</a>
+
+                    <div class="col s2" v-for="(list, key) in taskList">
+                        <div class="card ">
+                            <span class="new badge blue" data-badge-caption=" rmb">卖一价: {{ list.firstSale ? list.firstSale.price : list.price }}</span>
+                            <span class="new badge red" data-badge-caption=" rmb" v-if="list.firstPurchase">求一价: {{ list.firstPurchase.price || 0.00}}</span>
+                            <div class="card-image">
+                                <img class="item" :src="list.image">
+                                <span class="card-title">{{ list.name }}</span>
+                            </div>
+                            <div class="card-content">
+                            <p>
+                                <i class="material-icons">shopping_cart</i><b>{{list.saling}}</b> for sale<br/>
+                                <i class="material-icons">favorite</i><b>{{list.purchasing}}</b> for purchase<br/>
+                                <i class="material-icons">sync</i><b>{{list.saleNumber}}</b> Sold out
+                                <span>Market: {{list.marketPrice}}</span>
+                            </p>
+                            </div>
+                            <div class="card-action">
+                                <a href="javascript:;" @click="cancelTask(list.task + list.id)">Remove</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="BuyTab" class="col s12">
-        <div class="row pbt20 mb0 grey lighten-3">
-            <div class="col s8 offset-s2 card mb0 shadow-soft">
-                <form id="buyForm">
-                    <div class="col s2">
-                        <input type="hidden" name="task" value="buy" />
-                        <div class="input-field col s12">
-                            <input id="itemID" type="text" class="validate" name="id">
-                            <label for="itemID">Item ID</label>
+        <div id="BuyTab" class="col s12">
+            <div class="row pbt20 mb0 grey lighten-3">
+                <div class="col s8 offset-s2 card mb0 shadow-soft">
+                    <form id="buyForm">
+                        <div class="col s2">
+                            <input type="hidden" name="task" value="buy" />
+                            <div class="input-field col s12">
+                                <input id="itemID" type="text" class="validate" name="id">
+                                <label for="itemID">Item ID</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col s2">
-                        <div class="input-field col s12">
-                            <input id="maxPrice" type="text" class="validate" name="price">
-                            <label for="maxPrice">Price</label>
+                        <div class="col s2">
+                            <div class="input-field col s12">
+                                <input id="maxPrice" type="text" class="validate" name="price">
+                                <label for="maxPrice">Price</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col s2">
-                        <div class="input-field col s12">
-                            <select multiple name="type">
-                                <option value="" disabled selected>Gem Type</option>
-                                <option value="effect">Effect</option>
-                                <option value="color">Color</option>
-                                <option value="animation">Animation</option>
-                            </select>
+                        <div class="col s2">
+                            <div class="input-field col s12">
+                                <select multiple name="type">
+                                    <option value="" disabled selected>Gem Type</option>
+                                    <option value="effect">Effect</option>
+                                    <option value="color">Color</option>
+                                    <option value="animation">Animation</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col s2">
-                        <div class="input-field col s12">
-                            <input id="Detail" type="text" name="detail" class="validate">
-                            <label for="Detail">Detail</label>
+                        <div class="col s2">
+                            <div class="input-field col s12">
+                                <input id="Detail" type="text" name="detail" class="validate">
+                                <label for="Detail">Detail</label>
+                            </div>
+                        </div>  
+                        <div class="col s1">
+                            <div class="input-field col s12">
+                                <input type="checkbox" name="only" id="Only" />
+                                <label for="Only">Only</label>
+                            </div>
                         </div>
-                    </div>  
-                    <div class="col s1">
-                        <div class="input-field col s12">
-                            <input type="checkbox" name="only" id="Only" />
-                            <label for="Only">Only</label>
+                        <div class="col s3">
+                            <div class="input-field col s12 right-align">
+                                <button class="waves-effect waves-orange btn-flat" @click.prevent="addFish('#buyForm')">Add</button>                        
+                                <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#buyForm')">Fetch</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="section grey lighten-5">
+                <div class="row fishList">
+                    <div v-for="(list, index) in fishList" class="col s3">
+                        <div class="chip" v-if="list.option.task=='buy'">
+                            <img :src="list.img">
+                            <h5>{{ list.title }}</h5>
+                            <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="value">{{ key }}:<b>{{ value }}</b> </span>
+                            <div class="fishOpration">
+                                <a @click="activeFish(index)" href="javascript:;">Active</a>
+                                <a @click="showFish(index)" href="#modal1">Edit</a>
+                                <a @click="deleteFish(index)" href="javascript:;">Delete</a>
+                            </div>
                         </div>
                     </div>
                     <div class="col s3">
-                        <div class="input-field col s12 right-align">
-                            <button class="waves-effect waves-orange btn-flat" @click.prevent="addFish('#buyForm')">Add</button>                        
-                            <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#buyForm')">Fetch</button>
+                        <div class="chip">
+                            <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
+                            <h5> 血根护体</h5>
+                            <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="PurchaseTab" class="col s12">
+            <div class="row pbt20 mb0 grey lighten-3">
+                <div class="col s6 offset-s3 card mb0 shadow-soft">
+                    <form id="purchaseForm">
+                        <div class="col s3">
+                            <input type="hidden" name="task" value="purchase" />
+                            <div class="input-field col s12">
+                                <input id="purchaseID" type="text" class="validate" name="id">
+                                <label for="purchaseID">Item ID</label>
+                            </div>
+                        </div>
+                        <div class="col s3">
+                            <div class="input-field col s12">
+                                <input id="purchaseNum" type="text" name="num" class="validate">
+                                <label for="purchaseNum">Number</label>
+                            </div>
+                        </div>
+                        <div class="col s2">
+                            <div class="input-field col s12">
+                                <input id="purchaseTime" type="text" name="time" class="validate">
+                                <label for="purchaseTime">Time</label>
+                            </div>
+                        </div>
+                        <div class="col s4">
+                            <div class="input-field col s12 right-align">
+                                <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#purchaseForm')">Purchase</button>
+                                <button class="waves-effect waves-orange btn-flat" @click.prevent="addFish('#purchaseForm')">Add</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="section grey lighten-5">
+                <div class="row fishList">
+                    <div v-for="(list, index) in fishList" v-if="list.type=='purchase'" class="chip">
+                        <img :src="list.img">
+                        <h5>{{ list.title }}</h5>
+                        <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="value">{{ key }}:<b>{{ value }}</b> </span>
+                        <div class="fishOpration">
+                            <a @click="activeFish(index)" href="javascript:;">Active</a>
+                            <a @click="showFish(index)" href="#modal1">Edit</a>
+                            <a @click="deleteFish(index)" href="javascript:;">Delete</a>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
-        
-        <div class="section grey lighten-5">
-            <div class="row fishList">
-                <div class="col s3">
-                    <div class="chip">
-                        <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
-                        <h5> 血根护体</h5>
-                        <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
-                </div>
-                <div class="col s3">
-                    <div class="chip">
-                        <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
-                        <h5> 血根护体</h5>
-                        <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
-                </div>
-                <div class="col s3">
-                    <div class="chip">
-                        <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
-                        <h5> 血根护体</h5>
-                        <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
-                </div>
-                <div class="col s3">
-                    <div class="chip">
-                        <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
-                        <h5> 血根护体</h5>
-                        <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
+                    <div class="col s3">
+                        <div class="chip">
+                            <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
+                            <h5> 血根护体</h5>
+                            <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="PurchaseTab" class="col s12">PurchaseTab</div>
-    <div id="CourierTab" class="col s12">CourierTab</div>
-    <div id="SettingTab" class="col s12">SettingTab</div>
+        <div id="CourierTab" class="col s12">CourierTab</div>
+        <div id="SettingTab" class="col s12">SettingTab</div>
     </div>
 <body>
     <script src="/javascripts/jquery.min.js"></script>
@@ -174,6 +221,124 @@
     <script src="/javascripts/materialize.min.js"></script>
     <script src="/javascripts/vue.js"></script>
     <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                taskList: {},
+                fishList: [],
+                search: {
+                    status: false,
+                    word: '',
+                    list: []
+                },
+                modifyFish: {
+                    option: {}
+                },
+                isLogged: false,
+                isPurchaseSale: false,
+                typeSearch: 'Item',
+            },
+            created: function() {
+               this.getFish();
+               this.getTaskList();
+            },
+            methods: {
+                getTaskList: function(){
+                  var _this = this;
+                  $.get('/getTaskList', function(res) {
+                      console.log( res)
+                      _this.taskList = res;
+                  })
+                },
+                loginC5: function() {
+                    var _this = this;
+                    $.get('/login', function(res) {
+                        console.log(res);
+                        if (res.status == 'success') _this.isLogged = true;
+                    })
+                },
+                purchaseSale: function() {
+                    var _this = this;
+                    $.get('/purchaseSale', function(res) {
+                        console.log(res);
+                        if (res.status == 'success'){
+                            _this.isPurchaseSale = true
+                        }else {
+                            _this.isPurchaseSale = false
+                        };
+                    })
+                },
+                searchSubmit: function(word) {
+                    var _this = this;
+                    this.search.status = true;
+                    this.search.list = [];
+                    
+                    $.post('/search', {word: $(word).val()}, function(res) {
+                        _this.search.list = res.list;
+                        _this.search.status = false;
+                    })
+                },
+                generateTask: function(el){
+                    var _this = this;
+                    $.post('/generateTask', $(el).serialize(), function(res) {
+                        _this.taskList = res;
+                    })
+                },
+                cancelTask: function(task){
+                    var _this = this;
+                    console.log(task)
+                    $.post('/cancelTask', {task: task}, function(res) {
+                        _this.taskList = res;
+                    })
+                },
+                addFish: function(el) {
+                    $.post('/fish', $(el).serialize(), function(res) {
+                        console.log(res)
+                    })
+                },
+                getFish: function() {
+                    var _this = this;
+                    $.get('/fish', function(res) {
+                        _this.fishList = res.list;
+                    })
+                },
+                activeFish: function(i) {
+                    var _this = this;
+                    var fish = this.fishList[i];
+
+                    $.post('/generateTask', fish.option, function(res) {
+                        _this.taskList = res;
+                    })
+                },
+                activeAllFish: function(){
+                    var _this = this;
+                    async.mapLimit(_this.fishList, 1, function(fish, callback) {
+                        $.post('/generateTask', fish.option, function(){
+                            setTimeout(function() {
+                                callback(null, null);
+                            }, 1800)
+                        });
+                    }, function(err, result) {
+                        _this.getTaskList();
+                    })
+                },
+                deleteFish: function(i) {
+                    var fish = this.fishList[i];
+                    var _this = this;
+                    $.ajax({
+                        url: '/fish',
+                        type: 'delete',
+                        data: {
+                            id: fish.option.id
+                        }
+                    })
+                    .done(function(res) {
+                        _this.fishList.splice(i, 1);
+                    })
+                }
+            }
+        })
+
         $(function(){
            $('select').material_select();
         })

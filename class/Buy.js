@@ -20,6 +20,10 @@ class BuyClass {
         this.image = null;
         this.saleID = null;
         this.only = option.only || null;
+        this.marketPrice = null;
+        this.saleNumber = null;
+        this.saling = null;
+        this.purchasing = null;
     }
 
     init(callback) {
@@ -95,6 +99,11 @@ class BuyClass {
             this.saleID = result.saleID;
             this.image = result.image;
             this.name = result.name;
+            this.marketPrice = result.marketPrice;
+            this.saleNumber = result.saleNumber;
+            this.saling = result.saling;
+            this.purchasing = result.purchasing;
+
             callback && callback();
         })
     }

@@ -56,6 +56,7 @@ body {
 
 img.item {
     clip-path: polygon(2% 2%, 98% 2%, 98% 98%, 2% 98%);
+    -webkit-clip-path: polygon(2% 2%, 98% 2%, 98% 98%, 2% 98%);
     transform: scale(1.042);
 }
 .mbt20 {margin-top: 20px; margin-bottom: 20px;}
@@ -67,7 +68,8 @@ img.item {
 .items .card .badge.red {top: 34px;}
 .items .card .badge.blue {top: 12px;}
 .items .card .card-content {padding: 12px;}
-.items .card .card-content span {display: inline-block; padding-left: 23px; color:#bbb; font-size: .8em;}
+.items .card .card-title {font-size: 14px; text-shadow: 0 1px 3px rgba(0, 0, 0, .5); padding: 8px 12px;}
+.items .card .card-content span {display: inline-block; padding-left: 23px; width: 100%; color:#bbb; font-size: .8em;}
 .items .card .card-content .material-icons {color:#ccc; vertical-align: middle; margin-right: 8px; font-size: 14px;}
 .items .card .card-action {padding: 10px 12px; text-align: right;}
 /* Rules for sizing the icon. */
