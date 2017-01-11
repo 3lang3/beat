@@ -8,7 +8,8 @@ let _G = require('./../base/base.config');
 let fetchLoginSystem = require('./../class/C5login');
 let searchSystem = require('./../class/Search');
 let PurchaseSale = require('./../class/Sale');
-let Common = require('./../base/common');
+let DataClass = require('./../class/Data');
+let Common = require('./../base/event');
 let async = require('async');
 
 /* GET home page. */
@@ -25,7 +26,7 @@ router.get('/login', (req, res, nexxt) => {
 })
 
 router.post('/search', (req, res, nexxt) => {
-  searchSystem(req.body.word, (list) => {
+  searchSystem(req.body.word, (err, list) => {
     res.json({list: list})
   })
 })
@@ -65,5 +66,53 @@ router.get('/purchaseSale', (req, res, next) => {
     res.json({status: 'success'})
   }
 })
+
+router.get('/getSearchForm', (req, res, next) => {
+  async.waterfall([
+    getFilterGroup
+  ], (err, result) => {
+    res.json(result)
+  })
+})
+
+router.post('/getTypeSearch', (req, res, next) => {
+  let O = new DataClass(req.body['lists']);
+  O.flow(() => {
+    res.json({status: 'success'})
+  });
+})
+
+function getFilterGroup(callback) {
+  Common.fetchGet({
+    url: _G.C5.dotaUrl,
+    callback: (data) => {
+      let $ = cheerio.load(data.text);
+      let $groups = $('.filter-cat-group');
+      let _groupJson = [];
+
+      $groups.each((i, group) => {
+        let _title = $(group).find('.filter-cat-title').text().match(/[\u4e00-\u9fa5]+/g)[0],
+          _name = $(group).find('a').eq(1).attr('href').split('html?')[1].split('=')[0],
+          _list = [];
+
+        $(group).find('a').each((j, a) => {
+          if (j == 0) return;
+          _list.push({
+            text: (i > 3) ? $(a).attr('title') : $(a).text(),
+            value: $(a).attr('href').split('=')[1].split('&')[0],
+            type: _name
+          })
+        })
+        _groupJson.push({
+          title: _title,
+          name: _name,
+          list: _list
+        })
+      })
+
+      callback && callback(null, _groupJson)
+    }
+  })
+}
 
 module.exports = router;

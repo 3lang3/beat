@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var fishSchema = mongoose.Schema({
-    title: String,
-    img: String,
+    name: String,
+    image: String,
+    id: Number,
     option: Object
 })
 

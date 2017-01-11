@@ -32,12 +32,22 @@
                 <li class="tab"><a href="#HomeTab">Home</a></li>
                 <li class="tab"><a class="active" href="#BuyTab">Buy</a></li>
                 <li class="tab"><a href="#PurchaseTab">Purchase</a></li>
+                <li class="tab"><a href="#BugTab">Bug</a></li>
                 <li class="tab"><a href="#CourierTab">Courier</a></li>
+                <li class="tab"><a href="#DataTab">Data</a></li>
                 <li class="tab"><a href="#SettingTab">Setting</a></li>
             </ul>
             </div>
         </nav>
         <div id="HomeTab" class="col s12">
+            <div class="row mb0 grey lighten-3 topform">
+                <div class="col s8 offset-s2 card shadow-soft">
+                    <div class="search-wrapper card">
+                        <input id="search"><i class="material-icons">search</i>
+                        <div class="search-results"></div>
+                    </div>
+                </div>
+            </div>
             <div class="section grey lighten-5">
                 <div class="row items" style="width: 1400px;">
                     <div class="col s2">
@@ -64,8 +74,8 @@
 
                     <div class="col s2" v-for="(list, key) in taskList">
                         <div class="card ">
-                            <span class="new badge blue" data-badge-caption=" rmb">卖一价: {{ list.firstSale ? list.firstSale.price : list.price }}</span>
-                            <span class="new badge red" data-badge-caption=" rmb" v-if="list.firstPurchase">求一价: {{ list.firstPurchase.price || 0.00}}</span>
+                            <span class="new badge blue" data-badge-caption=" rmb">卖一: {{ list.firstSale ? list.firstSale.price : list.price }}</span>
+                            <span class="new badge red" data-badge-caption=" rmb" v-if="list.firstPurchase">求一: {{ list.firstPurchase.price || 0.00}}</span>
                             <div class="card-image">
                                 <img class="item" :src="list.image">
                                 <span class="card-title">{{ list.name }}</span>
@@ -87,17 +97,24 @@
             </div>
         </div>
         <div id="BuyTab" class="col s12">
-            <div class="row pbt20 mb0 grey lighten-3">
-                <div class="col s8 offset-s2 card mb0 shadow-soft">
+            <div class="row mb0 grey lighten-3 topform">
+                <div class="col s8 offset-s2 card shadow-soft">
                     <form id="buyForm">
-                        <div class="col s2">
+                        <div class="col s3 itemSearch">
                             <input type="hidden" name="task" value="buy" />
                             <div class="input-field col s12">
-                                <input id="itemID" type="text" class="validate" name="id">
-                                <label for="itemID">Item ID</label>
+                                <input id="itemID" type="text" v-model="search.word" @keyup.prevent="searchSubmit" class="validate" name="name">
+                                <input type="hidden" name="image" value="" />
+                                <input type="hidden" name="id" value="" />
+                                <input type="hidden" name="saleID" value="" />
+                                <ul v-show="search.list.length" class="itemSearchList autocomplete-content dropdown-content">
+                                    <li v-for="(list, index) in search.list" @click="searchItemClick(index, '#buyForm')">
+                                        <img :src="list.image" class="left circle"><span>{{list.name}}</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="col s2">
+                        <div class="col s1">
                             <div class="input-field col s12">
                                 <input id="maxPrice" type="text" class="validate" name="price">
                                 <label for="maxPrice">Price</label>
@@ -159,8 +176,8 @@
             </div>
         </div>
         <div id="PurchaseTab" class="col s12">
-            <div class="row pbt20 mb0 grey lighten-3">
-                <div class="col s6 offset-s3 card mb0 shadow-soft">
+            <div class="row mb0 grey lighten-3 topform">
+                <div class="col s6 offset-s3 card shadow-soft">
                     <form id="purchaseForm">
                         <div class="col s3">
                             <input type="hidden" name="task" value="purchase" />
@@ -211,7 +228,174 @@
                 </div>
             </div>
         </div>
-        <div id="CourierTab" class="col s12">CourierTab</div>
+        <div id="BugTab" class="col s12">
+            <div class="row mb0 grey lighten-3 topform">
+                <div class="col s4 offset-s4 card shadow-soft">
+                    <form id="bugForm">
+                        <div class="col s3">
+                            <div class="input-field col s12">
+                                <input type="hidden" name="task" value="bug" />
+                                <select multiple name="type">
+                                    <option value="" disabled selected>Bug Type</option>
+                                    <option value="ward">Ward</option>
+                                    <option value="hero">Hero</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col s3">
+                            <div class="input-field col s12">
+                                <input id="BugTime" type="text" name="time" class="validate">
+                                <label for="BugTime">Time</label>
+                            </div>
+                        </div>  
+                        <div class="col s2">
+                            <div class="input-field col s12">
+                                <input type="checkbox" name="only" id="BugOnly" />
+                                <label for="BugOnly">Only</label>
+                            </div>
+                        </div>
+                        <div class="col s4">
+                            <div class="input-field col s12 right-align">
+                                <button class="waves-effect pink waves-light btn" @click.prevent="addFish('#buyForm')">Add</button>                        
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="section grey lighten-5">
+                <div class="row fishList">
+                    <div v-for="(list, index) in fishList" class="col s3">
+                        <div class="chip" v-if="list.option.task=='buy'">
+                            <img :src="list.img">
+                            <h5>{{ list.title }}</h5>
+                            <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="value">{{ key }}:<b>{{ value }}</b> </span>
+                            <div class="fishOpration">
+                                <a @click="activeFish(index)" href="javascript:;">Active</a>
+                                <a @click="showFish(index)" href="#modal1">Edit</a>
+                                <a @click="deleteFish(index)" href="javascript:;">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="CourierTab" class="col s12">
+            <div class="row mb0 grey lighten-3 topform">
+                <div class="col s4 offset-s4 card center-align shadow-soft">
+                    <form id="gemCourierForm">
+                        <div class="col s4">
+                            <input type="hidden" name="task" value="gemCourier" />
+                            <div class="input-field col s12">
+                                <input id="gemCourierSetting_courier_rate" type="text" name="gemCourierSetting_courier_rate">
+                                <label for="gemCourierSetting_courier_rate">Courier Rate</label>
+                            </div>
+                        </div>
+                        <div class="col s4">
+                            <div class="input-field col s12">
+                                <input id="gemCourierSetting_gem_rate" type="text" name="gemCourierSetting_gem_rate">
+                                <label for="gemCourierSetting_gem_rate">Gem Rate</label>
+                            </div>
+                        </div>
+                        <div class="col s4">
+                            <div class="input-field col s12 right-align">
+                                <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#purchaseForm')">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="grey lighten-5">
+                <div class="row fishList">
+                    <div class="col s12 ">
+                        <div class="section">
+                            <button class="waves-effect waves-orange btn-flat" @click.prevent="gemCourierSwitcher = 'courier'">Edit Couriers</button>
+                            <button class="waves-effect waves-orange btn-flat" @click.prevent="gemCourierSwitcher = 'gem'">Edit Gems</button>
+                        </div>
+                    </div>
+                    <div class="col s3" v-for="(list, index) in gemCourierList" v-show="list.type==gemCourierSwitcher">
+                        <div class="chip">
+                            <img :src="list.image">
+                            <h5>{{ list.name }}</h5>
+                            Price: <input type="text" v-model="list.price" />CNY
+                            <div class="fishOpration">
+                                <a @click="activeGemCourier(index)" v-if="list.type=='courier'" href="javascript:;">Active</a>
+                                <a @click="saveGemCourier(index)" href="#modal1">Save</a>
+                                <a @click="deleteGemCourier(index)" href="javascript:;">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="DataTab" class="col s12">
+            <div class="row mb0 grey lighten-3 topform">
+                <div class="col s8 offset-s2 card center-align shadow-soft">
+                    <form id="dataForm">
+                        <div v-for="(search, index) in searchList" v-if="index > 2" class="col s2">
+                            <div class="input-field col s12">
+                                <select multiple :name="search.name + index">
+                                    <option value="" disabled selected>{{ search.title }}</option>
+                                    <option v-for="(list, j) in search.list" :value="JSON.stringify(list)"> {{ list.text }} </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col s2">
+                            <div class="input-field right-align col s12">
+                                <button class="waves-effect pink waves-light btn" @click.prevent="initData">Fetch</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="grey lighten-5">
+                <div class="row">
+                    <div class="col s12 section dataList">
+                        <table class="highlight">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Image</th>
+                                    <th>SaleID</th>
+                                    <th>PurchaseID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>Alvin</td>
+                                <td>Eclair</td>
+                                <td>$0.87</td>
+                                <td>$0.87</td>
+                                <td>$0.87</td>
+                                </tr>
+                                <tr>
+                                <td>Alan</td>
+                                <td>Jellybean</td>
+                                <td>$3.76</td>
+                                <td>$3.76</td>
+                                <td>$3.76</td>
+                                </tr>
+                                <tr>
+                                <td>Jonathan</td>
+                                <td>Lollipop</td>
+                                <td>$7.00</td>
+                                <td>$7.00</td>
+                                <td>$7.00</td>
+                                </tr>
+                                <tr>
+                                <td>Shannon</td>
+                                <td>KitKat</td>
+                                <td>$9.99</td>
+                                <td>$9.99</td>
+                                <td>$9.99</td>
+                                </tr>
+                            </tbody>
+                            </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="SettingTab" class="col s12">SettingTab</div>
     </div>
 <body>
@@ -224,8 +408,16 @@
         var app = new Vue({
             el: '#app',
             data: {
+                search: {
+                    list: [],
+                    word: '',
+                    status: false
+                },
                 taskList: {},
                 fishList: [],
+                searchList: [],
+                gemCourierSwitcher: 'courier',
+                gemCourierList: [],
                 search: {
                     status: false,
                     word: '',
@@ -239,10 +431,48 @@
                 typeSearch: 'Item',
             },
             created: function() {
+                var _this = this;
                this.getFish();
+               this.getGemCourier();
                this.getTaskList();
+               $.get('/getSearchForm', function(res) {
+                    console.log(res);
+                    _this.searchList = res;
+                    _this.$nextTick(function() {
+
+                        $('select').material_select();
+                    })
+                })
             },
             methods: {
+                searchSubmit: function(word) {
+                    if(!this.search.word.trim().length) return;
+                    var _this = this,
+                        _timer;
+
+                    this.search.status = true;
+                    this.search.list = [];
+                    clearTimeout(_timer);
+
+                    _timer = setTimeout(function(){
+                        $.post('/search', {word: _this.search.word}, function(res) {
+                            _this.search.list = res.list;
+                            _this.search.status = false;
+                        })
+                    }, 800)
+                },
+                searchItemClick: function(i, par) {
+                    var list = this.search.list[i],
+                        $par = $(par);
+
+                    $par.find('input[name="id"]').val(list.id);
+                    $par.find('input[name="image"]').val(list.image);
+                    $par.find('input[name="saleID"]').val(list.saleID);
+
+                    this.search.word = list.name;
+                    this.search.status = false;
+                    this.search.list = [];
+                },
                 getTaskList: function(){
                   var _this = this;
                   $.get('/getTaskList', function(res) {
@@ -268,16 +498,6 @@
                         };
                     })
                 },
-                searchSubmit: function(word) {
-                    var _this = this;
-                    this.search.status = true;
-                    this.search.list = [];
-                    
-                    $.post('/search', {word: $(word).val()}, function(res) {
-                        _this.search.list = res.list;
-                        _this.search.status = false;
-                    })
-                },
                 generateTask: function(el){
                     var _this = this;
                     $.post('/generateTask', $(el).serialize(), function(res) {
@@ -300,6 +520,21 @@
                     var _this = this;
                     $.get('/fish', function(res) {
                         _this.fishList = res.list;
+                    })
+                },
+                saveGemCourier: function(i) {
+                    var _this = this;
+                    $.post('/gemCourier', _this.gemCourierList[i],  function(res) {
+                        console.log(res);
+                        if(res.status == 'success') {
+                            Materialize.toast('Save success!', 3000)
+                        }
+                    })
+                },
+                getGemCourier: function() {
+                    var _this = this;
+                    $.get('/gemCourier', function(res) {
+                        _this.gemCourierList = res.data;
                     })
                 },
                 activeFish: function(i) {
@@ -335,7 +570,15 @@
                     .done(function(res) {
                         _this.fishList.splice(i, 1);
                     })
-                }
+                },
+                initData: function(){
+                    var lists = $('#dataForm').serializeArray(),
+                        _this = this;
+
+                    $.post('/data', {lists: JSON.stringify(lists)}, function(res) {
+                        console.log(res);
+                    })
+                },
             }
         })
 

@@ -3,7 +3,7 @@
 let cheerio = require('cheerio');
 let async = require('async');
 let _G = require('./../base/base.config');
-let Common = require('./../base/common');
+let Common = require('./../base/event');
 let _ = require('lodash');
 
 class PurchaseClass{
@@ -74,7 +74,7 @@ class PurchaseClass{
     getItemInfo(callback) {
         async.waterfall([
             (_c) => {
-                Common.initInfoEvent(this.id, _c);
+                Common.getItemInfo(this.id, _c);
             }
         ], (err, result) => {
 
@@ -128,9 +128,8 @@ class PurchaseClass{
 
     getPurchasingList(name, callback) {
         // 请求admin的purchaseList 检查是否重复求购
-        Common.FetchEvent({
+        Common.fetchPost({
             url: _G.C5.purchaseList,
-            cookie: global.cookie,
             callback: (data) => {
                 let $ = cheerio.load(data.text);
                 let listAry = [], _list;
@@ -188,15 +187,10 @@ class PurchaseClass{
             return callback(null, true);
         }
 
-        Common.FetchEvent({
+        Common.fetchPost({
             url: _G.C5.purchaseCancel,
-            type: 'post',
-            cookie: global.cookie,
-            data: {
-                id: id
-            },
+            data: { id: id },
             callback: (data) => {
-                
                 if(JSON.parse(data.text).status == 200) {
                     this.count++;
                     this.reduceCount()
@@ -210,10 +204,8 @@ class PurchaseClass{
     submitlPurchase(target, callback) {
         if(target == null || this.switch == true) return callback(null, true);
 
-        Common.FetchEvent({
+        Common.fetchPost({
             url: _G.C5.purchaseSubmit,
-            type: 'post',
-            cookie: global.cookie,
             data: {
                 id: this.id,
                 price: this.price,

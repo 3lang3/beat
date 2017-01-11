@@ -3,12 +3,13 @@
 let cheerio = require('cheerio');
 let async = require('async');
 let _G = require('./../base/base.config');
-let Common = require('./../base/common');
+let Common = require('./../base/event');
 let _ = require('lodash');
 
 class GemCourier {
     constructor(option) {
-        this.type = option.type;
+        this.type = option;
+        this.url = null;
     }
 
     flow(callback) {
@@ -16,13 +17,14 @@ class GemCourier {
             this.getCourierPageTotal.bind(this),
             this.getAllCourier.bind(this)
         ], (err, result) => {
-            console.log(result);
+            callback && callback(null, result);
         })
     }
 
     getCourierPageTotal(callback) {
-        Common.FetchEvent({
-            url: _G.C5.courierUrl,
+        this.url = (this.type == 'gem') ? _G.C5.effectUrl : _G.C5.courierUrl;
+        Common.fetchGet({
+            url: this.url,
             callback: (data) => {
                 let $ = cheerio.load(data.text),
                     pageTotal = $('.sale-pagination').length > 0 ? $('.sale-pagination').find('li.last a').attr('href').split('page=')[1] : 1;
@@ -34,7 +36,7 @@ class GemCourier {
 
     getAllCourier(pageTotal, callback) {
         async.timesSeries(pageTotal, (n, next) => {
-            getPageCourier(n, (err, result) => {
+            this.getPageCourier(n, (err, result) => {
                 next(err, result);
             })
         }, (err, results) => {
@@ -44,9 +46,9 @@ class GemCourier {
     }
 
     getPageCourier(n, callback) {
-        let _url = _G.C5.courierUrl + '&page=' + (n + 1);
+        let _url = this.url + '&page=' + (n + 1);
 
-        Common.FetchEvent({
+        Common.fetchGet({
             url: _url,
             callback: (data) => {
                 let $ = cheerio.load(data.text);
@@ -61,7 +63,7 @@ class GemCourier {
                                 image: $(el).find('img').attr('src'),
                                 id: $(el).find('a.img').attr('href').replace(/[^0-9]/ig, ""),
                                 type: 'gem',
-                                price: $(el).find('.price').replace(/[^0-9]/ig, "")
+                                price: $(el).find('.price').text().match(/[1-9]\d*.\d*|0.\d*[1-9]\d*/)[0]
                             }
                             ary.push(obj);
                         }
@@ -72,7 +74,7 @@ class GemCourier {
                                 image: $(el).find('img').attr('src'),
                                 id: $(el).find('a.img').attr('href').replace(/[^0-9]/ig, ""),
                                 type: 'courier',
-                                price: $(el).find('.price').replace(/[^0-9]/ig, "")
+                                price: $(el).find('.price').text().match(/[1-9]\d*.\d*|0.\d*[1-9]\d*/)[0]
                             }
                             ary.push(obj);
                         }

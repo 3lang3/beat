@@ -13,6 +13,7 @@ body {
     border-radius: 39px;
     line-height: inherit;
     background: #F5F5F5;
+    position: relative;
 }
 
 .fishList .chip img {
@@ -29,9 +30,10 @@ body {
 }
 
 .fishList .chip .fishOpration {
-    margin-top: 5px;
+    position: absolute;
+    right: 28px;
+    bottom: 8px;
     text-align: right;
-    padding-right: 20px;
 }
 
 .fishList .chip .fishOpration a {
@@ -53,6 +55,16 @@ body {
 .fetchList .card .card-action {
     padding: 8px 20px;
 }
+.fishList .chip { background: #fff; }
+.fishList .chip input[type="text"] { height: 38px; line-height: 38px; width: 30%; margin: 0;}
+
+.dataList table {width: 99%; margin: 20px auto; box-shadow: 0 0px 3px rgba(0, 0, 0, .2); background: #fff; font-size: .9em; border-radius: 2px;}
+.dataList table th, .dataList table td{padding: 10px 12px;}
+.dataList table>tbody>tr {border-bottom: 1px solid #f2f2f2;}
+.dataList table>tbody>tr:last-child {border-bottom: none;}
+
+.itemSearch {position: relative;} 
+.itemSearch .autocomplete-content { position: absolute; top: 60px; width: 91.9%; left: 12px; max-height: 290px;}
 
 img.item {
     clip-path: polygon(2% 2%, 98% 2%, 98% 98%, 2% 98%);
@@ -63,6 +75,7 @@ img.item {
 .pbt20 {padding-top: 20px; padding-bottom: 20px;}
 .mb0 {margin-bottom: 0;}
 .shadow-soft {box-shadow: 0 0px 8px 0 rgba(0,0,0,0.10);}
+.topform .card {margin: 1rem 0 1.1rem;}
 .items .card {border-radius: 4px; box-shadow: none; overflow: hidden; position: relative;}
 .items .card .badge {position: absolute; right: 12px; z-index: 10;}
 .items .card .badge.red {top: 34px;}

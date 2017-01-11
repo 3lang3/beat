@@ -4,7 +4,7 @@ let cheerio = require('cheerio');
 let async = require('async');
 let superagent = require('superagent');
 let _G = require('./../base/base.config');
-let Common = require('./../base/common');
+let Common = require('./../base/event');
 let _ = require('lodash');
 
 class PurchaseSale {
@@ -49,9 +49,8 @@ class PurchaseSale {
             }
         });
 
-        Common.FetchEvent({
+        Common.fetchGet({
             url: _G.C5.inventoryList,
-            cookie: global.cookie,
             callback: (data) => {
                 let $ = cheerio.load(data.text),
                     $items = $('#inventory-item-form li.item');

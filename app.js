@@ -12,6 +12,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var fish = require('./routes/fish');
 var gemCourier = require('./routes/gemCourier');
+var datas = require('./routes/data');
 
 var app = express();
 
@@ -31,6 +32,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/fish', fish);
 app.use('/gemCourier', gemCourier);
+app.use('/data', datas);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

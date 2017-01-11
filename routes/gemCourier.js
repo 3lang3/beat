@@ -3,45 +3,47 @@
 var express = require('express');
 var router = express.Router();
 var GemCourier = require('./../model/GemCourier');
+var classGemCourier = require('./../class/GemCourier');
 var async = require('async');
 var cheerio = require('cheerio');
 var superagent = require('superagent');
-var Common = require('./../base/common');
+var Common = require('./../base/event');
 var _G = require('./../base/base.config');
+var _ = require('lodash');
 
 router.post('/', (req, res, next) => {
-    let saveAry = JSON.parse(req.body['lists']);
+    let list = req.body;
 
-    GemCourier.insert(saveAry, (err, docs) => {
-        console.log(docs);
+    GemCourier.update({id: list.id}, { $set: list}, (err, docs) => {
         res.json({status: 'success', data: docs});
     })
 })
 
 router.get('/', (req, res, next) => {
-
-    Fish.find((err, doc) => {
-        if (err) res.json(err);
-        res.json({ status: 'success', list: doc })
+    GemCourier.find((err, doc) => {
+        if(err) res.json(err);
+        if(doc.length == 0) {
+            let newGem = new classGemCourier('gem');
+            let newCourier = new classGemCourier('courier');
+            async.parallel([
+                (c) => {
+                    newGem.flow(c);
+                },
+                (c) => {
+                    newCourier.flow(c);
+                }
+            ], (err, result) => {
+                GemCourier.insertMany(_.flatten(result), (err, docs) => {
+                    console.log(docs);
+                    res.json({status: 'success', data: docs })
+                })
+            })
+        }else {
+            res.json({status: 'success', data: doc })
+        }
     })
 })
 
-router.delete('/', (req, res, next) => {
-    Fish.remove({ id: req.body.id }, (err, doc) => {
-        if (err) res.json(err);
-        res.json({ status: 'success', list: doc })
-    })
-})
 
-router.put('/', (req, res, next) => {
-    Fish.update({ 'option.id': req.body.id }, { $set: {
-        'option.type': req.body['type'],
-        'option.price': req.body['price'],
-        'option.detail': req.body['detail']
-    }}, (err, doc) => {
-        if (err) res.json(err);
-        res.json({ status: 'success', list: doc })
-    })
-})
 
 module.exports = router;

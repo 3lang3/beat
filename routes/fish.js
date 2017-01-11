@@ -3,10 +3,11 @@
 var express = require('express');
 var router = express.Router();
 var Fish = require('./../model/Fish');
+var GemCourier = require('./../model/GemCourier');
 var async = require('async');
 var cheerio = require('cheerio');
 var superagent = require('superagent');
-var Common = require('./../base/common');
+var Common = require('./../base/event');
 var _G = require('./../base/base.config');
 
 router.post('/', (req, res, next) => {
@@ -20,7 +21,7 @@ router.post('/', (req, res, next) => {
         }
     ], (err, result) => {
         if (result) {
-            Common.FetchEvent({
+            Common.fetchGet({
                 url: _G.C5.baseUrl + 'dota/' + req.body.id + '/S.html',
                 callback: (data) => {
                     let $ = cheerio.load(data.text);
@@ -48,7 +49,6 @@ router.post('/', (req, res, next) => {
 })
 
 router.get('/', (req, res, next) => {
-
     Fish.find((err, doc) => {
         if (err) res.json(err);
         res.json({ status: 'success', list: doc })
