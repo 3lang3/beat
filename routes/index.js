@@ -10,6 +10,7 @@ let searchSystem = require('./../class/Search');
 let PurchaseSale = require('./../class/Sale');
 let DataClass = require('./../class/Data');
 let Common = require('./../base/event');
+let Task = require('./../base/task');
 let async = require('async');
 
 /* GET home page. */
@@ -36,7 +37,7 @@ router.get('/getTaskList', (req, res, next) => {
 })
 
 router.post('/generateTask', (req, res, next) => {
-  Common.GenerateTask({
+  Task.generate({
     option: req.body,
     callback: () => {
       res.json(global.TaskHash)
@@ -45,7 +46,7 @@ router.post('/generateTask', (req, res, next) => {
 })
 
 router.post('/cancelTask', (req, res, next) => {
-  Common.CancelTask({
+  Task.cancel({
     task: req.body.task,
     callback: () => {
       res.json(global.TaskHash)

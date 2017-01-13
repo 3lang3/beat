@@ -104,6 +104,7 @@
                             <input type="hidden" name="task" value="buy" />
                             <div class="input-field col s12">
                                 <input id="itemID" type="text" v-model="search.word" @keyup.prevent="searchSubmit" class="validate" name="name">
+                                <label for="itemID">Name</label>
                                 <input type="hidden" name="image" value="" />
                                 <input type="hidden" name="id" value="" />
                                 <input type="hidden" name="saleID" value="" />
@@ -154,23 +155,17 @@
             
             <div class="section grey lighten-5">
                 <div class="row fishList">
-                    <div v-for="(list, index) in fishList" class="col s3">
-                        <div class="chip" v-if="list.option.task=='buy'">
-                            <img :src="list.img">
-                            <h5>{{ list.title }}</h5>
-                            <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="value">{{ key }}:<b>{{ value }}</b> </span>
+                    <div v-for="(list, index) in fishList" v-if="list.option.task=='buy'" class="col s3">
+                        <div class="chip">
+                            <img :src="list.image">
+                            <h5>{{ list.name }}</h5>
+                            <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="key == 'price' || key == 'id' || key == 'only' || key == 'type'">{{ key }}:<b>{{ value }}</b> </span>
                             <div class="fishOpration">
                                 <a @click="activeFish(index)" href="javascript:;">Active</a>
                                 <a @click="showFish(index)" href="#modal1">Edit</a>
                                 <a @click="deleteFish(index)" href="javascript:;">Delete</a>
                             </div>
                         </div>
-                    </div>
-                    <div class="col s3">
-                        <div class="chip">
-                            <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
-                            <h5> 血根护体</h5>
-                            <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
                     </div>
                 </div>
             </div>
@@ -179,17 +174,20 @@
             <div class="row mb0 grey lighten-3 topform">
                 <div class="col s6 offset-s3 card shadow-soft">
                     <form id="purchaseForm">
-                        <div class="col s3">
+                        <div class="col s6">
                             <input type="hidden" name="task" value="purchase" />
                             <div class="input-field col s12">
-                                <input id="purchaseID" type="text" class="validate" name="id">
-                                <label for="purchaseID">Item ID</label>
-                            </div>
-                        </div>
-                        <div class="col s3">
-                            <div class="input-field col s12">
-                                <input id="purchaseNum" type="text" name="num" class="validate">
-                                <label for="purchaseNum">Number</label>
+                                <input id="purchaseID" type="text" v-model="search.word" @keyup.prevent="searchSubmit" name="name">
+                                <label for="purchaseID">Name</label>
+                                <input type="hidden" name="image" value="" />
+                                <input type="hidden" name="id" value="" />
+                                <input type="hidden" name="saleID" value="" />
+                                <input type="hidden" name="purchaseID" value="" />
+                                <ul v-show="search.list.length" class="itemSearchList autocomplete-content dropdown-content">
+                                    <li v-for="(list, index) in search.list" @click="searchItemClick(index, '#purchaseForm')">
+                                        <img :src="list.image" class="left circle"><span>{{list.name}}</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                         <div class="col s2">
@@ -200,8 +198,8 @@
                         </div>
                         <div class="col s4">
                             <div class="input-field col s12 right-align">
-                                <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#purchaseForm')">Purchase</button>
                                 <button class="waves-effect waves-orange btn-flat" @click.prevent="addFish('#purchaseForm')">Add</button>
+                                <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#purchaseForm')">Purchase</button>                                
                             </div>
                         </div>
                     </form>
@@ -209,54 +207,50 @@
             </div>
             <div class="section grey lighten-5">
                 <div class="row fishList">
-                    <div v-for="(list, index) in fishList" v-if="list.type=='purchase'" class="chip">
-                        <img :src="list.img">
-                        <h5>{{ list.title }}</h5>
-                        <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="value">{{ key }}:<b>{{ value }}</b> </span>
-                        <div class="fishOpration">
-                            <a @click="activeFish(index)" href="javascript:;">Active</a>
-                            <a @click="showFish(index)" href="#modal1">Edit</a>
-                            <a @click="deleteFish(index)" href="javascript:;">Delete</a>
-                        </div>
-                    </div>
-                    <div class="col s3">
+                    <div v-for="(list, index) in fishList" v-if="list.option.task=='purchase'" class="col s3">
                         <div class="chip">
-                            <img src="https://i.c5game.com/economy/570/2016/07/17/3603a851b4193d2ffe91a2ed8fad94a4.png">
-                            <h5> 血根护体</h5>
-                            <span style="padding-right: 4px;">id:<b>22025</b></span><span style="padding-right: 4px;">price:<b>10</b></span><!----> <div class="fishOpration"><a href="javascript:;">Active</a> <a href="#modal1">Edit</a> <a href="javascript:;">Delete</a></div></div>
+                            <img :src="list.image">
+                            <h5>{{ list.name }}</h5>
+                            <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="key == 'time' || key == 'id' || key == 'num'">{{ key }}:<b>{{ value || 1 }}</b> </span>
+                            <div class="fishOpration">
+                                <a @click="activeFish(index)" href="javascript:;">Active</a>
+                                <a @click="showFish(index)" href="#modal1">Edit</a>
+                                <a @click="deleteFish(index)" href="javascript:;">Delete</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div id="BugTab" class="col s12">
             <div class="row mb0 grey lighten-3 topform">
-                <div class="col s4 offset-s4 card shadow-soft">
+                <div class="col s10 offset-s1 card shadow-soft">
                     <form id="bugForm">
-                        <div class="col s3">
+                        <input type="hidden" name="task" value="bug" />
+                        <div v-for="(search, index) in searchList" v-if="index > 2" class="col s2">
                             <div class="input-field col s12">
-                                <input type="hidden" name="task" value="bug" />
                                 <select multiple name="type">
-                                    <option value="" disabled selected>Bug Type</option>
-                                    <option value="ward">Ward</option>
-                                    <option value="hero">Hero</option>
+                                    <option value="" disabled selected>{{ search.title }}</option>
+                                    <option v-for="(list, j) in search.list" :value="list.value"> {{ list.text }} </option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col s3">
+                        <div class="col s1">
+                            <div class="input-field col s12">
+                                <input id="BugPrice" type="text" name="price" />
+                                <label for="BugPrice">Price</label>
+                            </div>
+                        </div>
+                        <div class="col s1">
                             <div class="input-field col s12">
                                 <input id="BugTime" type="text" name="time" class="validate">
                                 <label for="BugTime">Time</label>
                             </div>
                         </div>  
                         <div class="col s2">
-                            <div class="input-field col s12">
-                                <input type="checkbox" name="only" id="BugOnly" />
-                                <label for="BugOnly">Only</label>
-                            </div>
-                        </div>
-                        <div class="col s4">
                             <div class="input-field col s12 right-align">
-                                <button class="waves-effect pink waves-light btn" @click.prevent="addFish('#buyForm')">Add</button>                        
+                                <button class="waves-effect waves-orange btn-flat" @click.prevent="addFish('#bugForm')">Add</button>                        
+                                <button class="waves-effect pink waves-light btn" @click.prevent="generateTask('#bugForm')">Active</button>                        
                             </div>
                         </div>
                     </form>
@@ -468,6 +462,7 @@
                     $par.find('input[name="id"]').val(list.id);
                     $par.find('input[name="image"]').val(list.image);
                     $par.find('input[name="saleID"]').val(list.saleID);
+                    $par.find('input[name="purchaseID"]') && $par.find('input[name="purchaseID"]').val(list.purchaseID);
 
                     this.search.word = list.name;
                     this.search.status = false;

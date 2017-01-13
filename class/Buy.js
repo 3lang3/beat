@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 let cheerio = require('cheerio');
 let async = require('async');
@@ -284,6 +284,7 @@ class BuyClass {
     }
 
     init(callback) {
+        callback && callback();
         async.forever(
             (next) => {
                 this.flow(() => setTimeout(() => next(this.switch) , _G.Time.fetchInterval));
@@ -308,7 +309,11 @@ class BuyClass {
             this.getItemDetailArray.bind(this),
             this.getItemDetail.bind(this)
         ], (err, result) => {
-            console.log('First', result, result.length);
+            if(result.length > 0) {
+                async.mapLimit(result, 1, Common.C5Payment, (err, result) => {
+                    
+                })
+            }
             callback && callback(result);
         })
     }
@@ -318,7 +323,9 @@ class BuyClass {
             this.getItemDetailArrayOnly.bind(this),
             this.getItemDetail.bind(this)
         ], (err, result) => {
-            console.log('Second', result, result.length);
+            async.mapLimit(result, 1, Common.C5Payment, (err, result) => {
+                    
+            })
             callback && callback(result);
         })
     }

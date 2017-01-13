@@ -13,25 +13,6 @@ function getList(word, callback) {
         console.log(docs)
         callback && callback(null, docs);
     })
-    // Common.fetchGet({
-    //     url: _G.C5.dotaUrl + '?k=' + encodeURI(word),
-    //     callback: (data) => {
-    //         let $ = cheerio.load(data.text);
-    //         let searchList = [];
-
-    //         $('li.selling').each((i, el) => {
-    //             searchList.push({
-    //                 id: parseFloat($(el).find('.img').attr('href').split('/dota/')[1]),
-    //                 img: $(el).find('img').attr('src'),
-    //                 name: $(el).find('img').attr('alt'),
-    //                 price: $(el).find('.price').text(),
-    //                 num: $(el).find('.num').text()
-    //             })
-    //         })
-    //         console.log(searchList[0])
-    //         callback && callback(searchList);
-    //     }
-    // })
 }
 
 module.exports = getList;

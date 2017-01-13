@@ -1,13 +1,10 @@
-'use strict'
+'use strict';
 
 let cheerio = require('cheerio');
 let superagent = require('superagent');
 let async = require('async');
 let _ = require('lodash');
 let _G = require('./base.config');
-let PurchaseClass = require('./../class/Purchase');
-let BuyClass = require('./../class/Buy');
-let SendMail = require('./../class/Mail');
 
 function fetchGet({url, callback, cookie}) {
     superagent
@@ -74,6 +71,7 @@ function getItemInfo(id, callback) {
                             saleID: $('[data-tpl="sale-tpl"]').attr('data-url').split('=')[1].split('&')[0],
                             image: $('.sale-item-img img').attr('src'),
                             name: $('.sale-item-img img').attr('alt'),
+                            type: $('a[href*="dota.html?hero"]').length > 0 ? $('a[href*="dota.html?hero"]').attr('href').split('hero=')[1] : 'ward',
                             // saleCount: $('.sale-item-num').text().replace(/[^0-9]/ig, ""),
                             // salingCount: $('li[role="presentation"]').eq(0).text().replace(/[^0-9]/ig, ""),
                             // purchasingCount: $('li[role="presentation"]').eq(1).text().replace(/[^0-9]/ig, ""),
@@ -98,7 +96,8 @@ function getItemInfo(id, callback) {
         let obj = result[0];
             obj.purchaseID = result[1];
 
-        callback && callback(null, obj)
+        callback && callback(null, obj);
+        console.log(id, 'info down!');
     })
 }
 
@@ -128,7 +127,7 @@ exports.C5Payment = function(item, callback) {
     })
 }
 
-exports.getFirstItem = function(id, type, callback) {
+exports.getFirstItem = function (id, type, callback) {
     let _url = type == 'sale' ? _G.C5.saleUrl + '?id=' + id : _G.C5.purchaseUrl + '?id=' + id;
     fetchGet({
         url: _url,
@@ -143,28 +142,6 @@ exports.getFirstItem = function(id, type, callback) {
             callback(null, _r);
         }
     })
-}
-
-exports.GenerateTask = function({option, callback}) {
-    switch (option.task) {
-        case 'purchase':
-            global.TaskHash[option.task + option.id] = new PurchaseClass(option);
-            break;
-        case 'buy':
-            global.TaskHash[option.task + option.id] = new BuyClass(option);
-            break;
-        case 'bug':
-            global.TaskHash[option.task + option.id] = new BuyClass(option);
-    }
-
-    global.TaskHash[option.task + option.id].init(callback);
-}
-
-exports.CancelTask = function({task, callback}) {
-    global.TaskHash[task].switch = true;
-    delete global.TaskHash[task];
-
-    callback && callback();
 }
 
 exports.fetchGet = fetchGet;

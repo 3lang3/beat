@@ -10,6 +10,7 @@ var Common = require('./../base/event');
 var _G = require('./../base/base.config');
 
 router.post('/', (req, res, next) => {
+    res.json({status: 'success', data: 'start sync data' });
     async.waterfall([
         (c) => {
             let NewData = new DataClass(req.body['lists']);
@@ -18,7 +19,6 @@ router.post('/', (req, res, next) => {
     ], (err, result) => {
         Item.insertMany(result, (err, docs) => {
             console.log(docs);
-            res.json({status: 'success', data: docs })
         })
     })
     

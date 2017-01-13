@@ -60,7 +60,6 @@ class DataClass{
                             obj = {
                                 id: parseFloat($(el).find('.img').attr('href').replace(/[^0-9]/ig, "")),
                                 image: $(el).find('img').attr('src'),
-                                type: urlPage.url.indexOf('type=ward&') > -1 ? 'ward' : 'hero',
                                 name: $(el).find('img').attr('alt')
                             }
                             resultAry.push(obj);
@@ -77,7 +76,6 @@ class DataClass{
     }
 
     fetchItemIds(objAry, callback) {
-
         async.mapSeries(objAry, (obj, callback) => {
             Common.getItemInfo(obj.id, callback)
         }, (err, result) => {

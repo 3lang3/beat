@@ -3,11 +3,7 @@
 var express = require('express');
 var router = express.Router();
 var Fish = require('./../model/Fish');
-var GemCourier = require('./../model/GemCourier');
 var async = require('async');
-var cheerio = require('cheerio');
-var superagent = require('superagent');
-var Common = require('./../base/event');
 var _G = require('./../base/base.config');
 
 router.post('/', (req, res, next) => {
@@ -21,26 +17,16 @@ router.post('/', (req, res, next) => {
         }
     ], (err, result) => {
         if (result) {
-            Common.fetchGet({
-                url: _G.C5.baseUrl + 'dota/' + req.body.id + '/S.html',
-                callback: (data) => {
-                    let $ = cheerio.load(data.text);
-                    let title = $('.sale-item').find('.imgs img').attr('alt') || undefined;
-                    let img = $('.sale-item').find('.imgs img').attr('src') || undefined;
-
-                    let newFish = new Fish({
-                        title: title,
-                        img: img,
-                        option: req.body
-                    })
-                    newFish.save((err) => {
-                        if (err) res.json(err);
-
-                        Fish.find((err, doc) => {
-                            res.json({ status: 'success', list: doc })
-                        })
-                    })
-                }
+            let newFish = new Fish({
+                name: req.body.name,
+                image: req.body.image,
+                option: req.body
+            })
+            newFish.save((err) => {
+                if (err) res.json(err);
+                Fish.find((err, doc) => {
+                    res.json({ status: 'success', list: doc })
+                })
             })
         } else {
             res.json({ status: 'error', message: 'has added' })

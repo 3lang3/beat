@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 let cheerio = require('cheerio');
 let async = require('async');
@@ -6,42 +6,36 @@ let _G = require('./../base/base.config');
 let Common = require('./../base/event');
 let _ = require('lodash');
 
-class PurchaseClass{
-    constructor(option) {
+class PurchaseClass {
+    constructor (option) {
         this.id = option.id;
         this.time = option.time || 1;
         this.price = null;
         this.num = option.num || 1,
         this.switch = null;
         this.task = option.task;
-        this.name = null;
-        this.image = null;
-        this.saleID = null;
-        this.purchaseID = null;
+        this.name = option.name;
+        this.image = option.image;
+        this.saleID = option.saleID;
+        this.purchaseID = option.purchaseID;
         this.firstSale = null;
         this.firstPurchase = null;
-        this.marketPrice = null;
-        this.saleNumber = null;
-        this.saling = null;
-        this.purchasing = null;
         this.maxPurchasePrice = false;
         this.count = 0;
     }
 
     // 初始化程序
-    init(callback) {
-        this.getItemInfo(() => {
-            callback && callback();
-            async.forever(
-                (next) => {
-                    this.flow(() => {
-                        setTimeout(() => next(this.switch), this.time * 60 * 1000);
-                    });
-                }, (err) => {
-                    this.cancelFlow();
-                }
-            );
-        });
+    init (callback){
+        callback && callback();
+        async.forever(
+            (next) => {
+                this.flow(() => {
+                    setTimeout(() => next(this.switch), this.time * 60 * 1000);
+                });
+            }, (err) => {
+                this.cancelFlow();
+            }
+        )
     }
     // 整合工作流
     flow(callback) {
