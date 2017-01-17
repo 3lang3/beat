@@ -9,7 +9,7 @@ let _ = require('lodash');
 class PurchaseClass {
     constructor (option) {
         this.id = option.id;
-        this.time = option.time || 1;
+        this.time = option.time || 10;
         this.price = null;
         this.num = option.num || 1,
         this.switch = null;

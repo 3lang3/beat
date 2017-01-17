@@ -19,6 +19,7 @@
             <a href="#" class="brand-logo"><i class="material-icons md-48">bubble_chart</i></a>
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="javascript:;" data-activates="slide-out" class="viewc5"><i class="material-icons">visibility</i></a></li>
                 <li><a href="#"><i class="material-icons">power_settings_new</i></a></li>
                 <li><a href="#"><i class="material-icons">person</i></a></li>
             </ul>
@@ -36,6 +37,7 @@
                 <li class="tab"><a href="#CourierTab">Courier</a></li>
                 <li class="tab"><a href="#DataTab">Data</a></li>
                 <li class="tab"><a href="#SettingTab">Setting</a></li>
+                <li class="tab"><a href="#ViewTab">ViewC5</a></li>
             </ul>
             </div>
         </nav>
@@ -77,7 +79,7 @@
                             <span class="new badge blue" data-badge-caption=" rmb">卖一: {{ list.firstSale ? list.firstSale.price : list.price }}</span>
                             <span class="new badge red" data-badge-caption=" rmb" v-if="list.firstPurchase">求一: {{ list.firstPurchase.price || 0.00}}</span>
                             <div class="card-image">
-                                <img class="item" :src="list.image">
+                                <img class="item" :src="list.image || '/images/bug.png'">
                                 <span class="card-title">{{ list.name }}</span>
                             </div>
                             <div class="card-content">
@@ -259,9 +261,9 @@
             
             <div class="section grey lighten-5">
                 <div class="row fishList">
-                    <div v-for="(list, index) in fishList" class="col s3">
-                        <div class="chip" v-if="list.option.task=='buy'">
-                            <img :src="list.img">
+                    <div v-for="(list, index) in fishList" class="col s3" v-if="list.option.task=='bug'">
+                        <div class="chip">
+                            <img :src="list.img || '/images/bug.png'">
                             <h5>{{ list.title }}</h5>
                             <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="value">{{ key }}:<b>{{ value }}</b> </span>
                             <div class="fishOpration">
@@ -391,7 +393,13 @@
             </div>
         </div>
         <div id="SettingTab" class="col s12">SettingTab</div>
+        <div id="ViewTab" class="col s12">
+            
+        </div>
     </div>
+     <ul id="slide-out" class="side-nav">
+        <iframe src="https://www.c5game.com" frameborder="0" style="width: 100%; height: 100vh; display: block; "></iframe>
+    </ul>
 <body>
     <script src="/javascripts/jquery.min.js"></script>
     <script src="/javascripts/async.min.js"></script>
@@ -439,22 +447,19 @@
                 })
             },
             methods: {
-                searchSubmit: function(word) {
+                searchSubmit: _.debounce(function(word) {
                     if(!this.search.word.trim().length) return;
-                    var _this = this,
-                        _timer;
+                    var _this = this;
 
                     this.search.status = true;
                     this.search.list = [];
-                    clearTimeout(_timer);
 
-                    _timer = setTimeout(function(){
-                        $.post('/search', {word: _this.search.word}, function(res) {
-                            _this.search.list = res.list;
-                            _this.search.status = false;
-                        })
-                    }, 800)
-                },
+                    $.post('/search', {word: _this.search.word}, function(res) {
+                        _this.search.list = res.list;
+                        _this.search.status = false;
+                    })
+
+                }, 800),
                 searchItemClick: function(i, par) {
                     var list = this.search.list[i],
                         $par = $(par);
@@ -579,6 +584,13 @@
 
         $(function(){
            $('select').material_select();
+           $('.viewc5').sideNav({
+                menuWidth: 1200, // Default is 240
+                edge: 'right', // Choose the horizontal origin
+                closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+                draggable: true // Choose whether you can drag to open on touch screens
+                }
+            );
         })
     </script>
 </body>
