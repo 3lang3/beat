@@ -20,8 +20,8 @@
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a href="javascript:;" data-activates="slide-out" class="viewc5"><i class="material-icons">visibility</i></a></li>
-                <li><a href="#"><i class="material-icons">power_settings_new</i></a></li>
-                <li><a href="#"><i class="material-icons">person</i></a></li>
+                <li><a href="javascript:;" @click="loginC5"><i class="material-icons">power_settings_new</i></a></li>
+                <li><a href="javascript:;"><i class="material-icons">person</i></a></li>
             </ul>
             <ul class="side-nav" id="mobile-demo">
                 <li><a href="#">Sass</a></li>
@@ -43,10 +43,12 @@
         </nav>
         <div id="HomeTab" class="col s12">
             <div class="row mb0 grey lighten-3 topform">
-                <div class="col s8 offset-s2 card shadow-soft">
-                    <div class="search-wrapper card">
-                        <input id="search"><i class="material-icons">search</i>
-                        <div class="search-results"></div>
+                <div class="col s8 offset-s2">
+                    <div class="search-wrapper card shadow-soft">
+                        <input id="search" v-model="search.word" @keyup.prevent="searchSubmit"><i class="material-icons">search</i>
+                        <div class="search-results">
+                            <a v-for="(list, index) in search.list" href="javascript:;"><img :src="list.image" class="circle"><span>{{list.name}}</span></a>
+                        </div>
                     </div>
                 </div>
             </div>

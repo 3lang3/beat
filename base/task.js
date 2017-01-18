@@ -19,7 +19,6 @@ exports.generate = function({option, callback}) {
             global.TaskHash[option.task + option.id] = new BugClass(option);
             break;
     }
-    console.log(BugClass)
     global.TaskHash[option.task + option.id].init(callback);
 }
 

@@ -305,6 +305,7 @@ class BuyClass {
     }
 
     flow(callback) {
+        console.log('fetch: ', this.name, this.id);
         async.waterfall([
             this.getItemDetailArray.bind(this),
             this.getItemDetail.bind(this)
@@ -319,6 +320,7 @@ class BuyClass {
     }
 
     flowSecond(callback) {
+        console.log('fetch: ', this.name, this.id, 'only first page!');
         async.waterfall([
             this.getItemDetailArrayOnly.bind(this),
             this.getItemDetail.bind(this)
@@ -331,7 +333,8 @@ class BuyClass {
     }
     
     getItemDetailArray(callback) {
-        let page = 1, status = true, resultAry = [];
+        let page = 2, status = true, resultAry = [];
+        
         async.whilst(
             () => status,
             (_c) => {

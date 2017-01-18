@@ -9,9 +9,9 @@ let DataClass = require('./../model/Item');
 
 class BugClass {
     constructor(option) {
-        this.time = option.time || 1;
+        this.time = option.time || 10;
         this.type = option.type;
-        this.price = option.price || 99999;
+        this.price = option.price || 1000;
         this.task = option.task;
         this.switch = null;
     }
