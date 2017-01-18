@@ -333,8 +333,8 @@ class BuyClass {
     }
     
     getItemDetailArray(callback) {
-        let page = 2, status = true, resultAry = [];
-        
+        let page = 1, status = true, resultAry = [];
+        if(this.only) page = 2;
         async.whilst(
             () => status,
             (_c) => {

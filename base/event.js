@@ -5,6 +5,7 @@ let superagent = require('superagent');
 let async = require('async');
 let _ = require('lodash');
 let _G = require('./base.config');
+let SendMail = require('./../class/Mail');
 
 function fetchGet({url, callback, cookie}) {
     superagent
