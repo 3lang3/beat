@@ -135,16 +135,20 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col s2">
+                        <div class="col s1">
                             <div class="input-field col s12">
                                 <input id="Detail" type="text" name="detail" class="validate">
                                 <label for="Detail">Detail</label>
                             </div>
                         </div>  
-                        <div class="col s1">
-                            <div class="input-field col s12">
+                        <div class="col s2">
+                            <div class="input-field col s6">
                                 <input type="checkbox" name="only" id="Only" />
                                 <label for="Only">Only</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input type="checkbox" name="onlyFirstPage" id="onlyFirstPage" />
+                                <label for="onlyFirstPage">First</label>
                             </div>
                         </div>
                         <div class="col s3">
@@ -163,7 +167,7 @@
                         <div class="chip">
                             <img :src="list.image">
                             <h5>{{ list.name }}</h5>
-                            <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="key == 'price' || key == 'id' || key == 'only' || key == 'type'">{{ key }}:<b>{{ value }}</b> </span>
+                            <span style="padding-right: 4px;" v-for="(value, key) in list.option" v-if="key == 'price' || key == 'id' || key == 'only' || key == 'type' || key == 'onlyFirstPage'">{{ key }}:<b>{{ value }}</b> </span>
                             <div class="fishOpration">
                                 <a @click="activeFish(index)" href="javascript:;">Active</a>
                                 <a @click="showFish(index)" href="#modal1">Edit</a>

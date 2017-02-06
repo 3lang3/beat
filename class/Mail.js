@@ -14,8 +14,8 @@ module.exports = function(html, callback) {
     let o = {
         from: "283876571@qq.com", // 发件地址
         to: "675483520@qq.com", // 收件列表
-        subject: "找到饰品", // 标题
-        html: html // html 内容
+        subject: html.title || "找到饰品", // 标题
+        html: html.html // html 内容
     }
     smtpTransport.sendMail(o, (error, response) => {
         if(error){

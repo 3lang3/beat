@@ -16,7 +16,7 @@ function fetchGet({url, callback, cookie}) {
         .timeout(5000)
         .end((err, datas) => {
             if (err) {
-                console.log(url, 'call again!', err);
+                console.log(url, 'call again!');
                 return setTimeout(() => {
                     fetchGet({url, callback, cookie})
                 }, 2000);
@@ -119,10 +119,10 @@ exports.C5Payment = function(item, callback) {
         callback: (data) => {
             let json = JSON.parse(data.text);
             console.log(json);
-            callback(null, json);
+            callback && callback(null, json);
             if(json.status == 200) {
                 let _html = '<h1>'+item.name+'</h1>' + item.gem.gem_style.join(';');
-                SendMail(_html);
+                SendMail({html: _html});
             }
         }
     })

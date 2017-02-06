@@ -12,7 +12,12 @@ let DataClass = require('./../class/Data');
 let Common = require('./../base/event');
 let Task = require('./../base/task');
 let async = require('async');
+let SendMail = require('./../class/Mail');
 
+
+let timer =  setInterval(()=> {
+      SendMail({title: 'App is active!', html: 'test text'});
+}, 2 * 60 * 60 * 1000)
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
