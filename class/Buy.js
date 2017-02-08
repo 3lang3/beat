@@ -45,7 +45,7 @@ class BuyClass {
             );
 
             if(this.only) {
-                setInterval(() => this.flowSecond(), 120);
+                setInterval(() => this.flowSecond(), 100);
             }
         }
         
@@ -114,19 +114,17 @@ class BuyClass {
             Common.fetchGet({
                 url: _url,
                 callback: (data) => {
-                    
                     try {
                         let json = eval('(' + data.text + ')');
                         if(json.status == 200) {
                             callback(null, _.flatten(json.body.items));
+                            if(this.onlyFirstPage) this.price = json.body.items[0].price + 3;
                         }else {
                             callback(null, []);
                         }
                     } catch (error) {
                         return callback(null, []);
                     }
-                    
-                    
                 }
             })
     }
@@ -141,7 +139,6 @@ class BuyClass {
     getDetail(item, callback) {
         let isGem = this.gem,
             isDetail = this.detail ? true : false;
-
         if(item.price > this.price || item.owner.id == _G.User.id) return callback(null, null);
         if(this.gem && !item.gem.has_gem) return callback(null, null);
         if(this.type) {
@@ -176,78 +173,6 @@ class BuyClass {
             Common.C5Payment(item);
             callback(null, item);
         }
-        // async.waterfall([
-        //     // 价格筛选
-        //     (_c) => {
-        //         if(item.price <= this.price && item.owner.id != _G.User.id) {
-        //             _c(null, item);
-        //         }else {
-        //             _c(null, null);
-        //         }
-        //     },
-        //     // 是否含有宝石筛选
-        //     (item, _c) => {
-        //         if(_.isNull(item)) return _c(null, null);
-        //         if(this.gem) {
-        //             if(item.gem.has_gem) {
-        //                 _c(null, item);
-        //             }else {
-        //                 _c(null, null);
-        //             };
-        //         }else {
-        //             _c(null, item);
-        //         }
-        //     },
-        //     // 筛选具体宝石类型
-        //     (item, _c) => {
-        //         if(_.isNull(item)) return _c(null, null);
-        //         if(this.type) {
-        //             let _target, _typeArray = _.isArray(this.type) ? this.type : [this.type];
-
-        //             item.gem.image.map((n) => {
-        //                 _typeArray.map((m) => {
-        //                     if (n.indexOf(m) > -1) return _target = true;
-        //                 })
-        //             })
-
-        //             if (_target) {
-        //                 _c(null, item)
-        //             } else {
-        //                 _c(null, null);
-        //             }
-        //         }else {
-        //             _c(null, item)
-        //         }
-        //     },
-        //     (item, _c) => {
-        //         // 筛选详情 同时屏蔽部分动能
-        //         if(_.isNull(item)) return _c(null, null);
-        //         if(this.detail) {
-        //             let _url = _G.C5.detailUrl + '?classid=' + item.classid + '&instanceid=' + item.instanceid;
-        //             Common.fetchGet({
-        //                 url: _url,
-        //                 callback: (data) => {
-        //                     let $ = cheerio.load(data.text, { decodeEntities: false });
-        //                     let content = $('.info').html();
-
-        //                     if (content.indexOf(this.detail) > -1) {
-        //                         _c(null, item);
-        //                     }else {
-        //                         _c(null, null);
-        //                     }
-        //                 }
-        //             })
-        //         }else {
-        //             if(item.gem.has_gem && item.gem.gem_style.join('').indexOf('远行之宝') > -1 ) {
-        //                 _c(null, null);
-        //             }else {
-        //                 _c(null, item);
-        //             }
-        //         }
-        //     }
-        // ], (err, result) => {
-        //     callback(null, result)
-        // })
     }
 }
 

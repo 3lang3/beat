@@ -16,7 +16,7 @@
     <div id="app">
         <nav class="nav-extended indigo">
             <div class="nav-wrapper">
-            <a href="#" class="brand-logo"><i class="material-icons md-48">bubble_chart</i></a>
+            <a href="javascript:;" @click="activeAllFish" class="brand-logo"><i class="material-icons md-48">bubble_chart</i></a>
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a href="javascript:;" data-activates="slide-out" class="viewc5"><i class="material-icons">visibility</i></a></li>
@@ -557,7 +557,7 @@
                         $.post('/generateTask', fish.option, function(){
                             setTimeout(function() {
                                 callback(null, null);
-                            }, 1800)
+                            }, 1000)
                         });
                     }, function(err, result) {
                         _this.getTaskList();
