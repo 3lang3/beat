@@ -21,7 +21,7 @@
     "node-mailer": "^0.1.1",
     "node-tesseract": "^0.2.7",
     "nodemailer": "^2.7.0",
-    "serve-favicon": "~2.3.0",
+    "serve-favicon": "2.5.0",
     "superagent": "^3.3.1"
   },
   "devDependencies": {
