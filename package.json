@@ -13,7 +13,7 @@
     "debug": "~2.2.0",
     "ejs": "~2.3.3",
     "express": "~4.13.1",
-    "http-parser-js": "^0.4.4",
+    "http-parser-js": "0.5.5",
     "lodash": "^4.17.2",
     "log4js": "^1.0.1",
     "mongoose": "^4.7.4",
