@@ -16,7 +16,7 @@
     "http-parser-js": "^0.4.4",
     "lodash": "^4.17.2",
     "log4js": "^1.0.1",
-    "mongoose": "^4.7.4",
+    "mongoose": "^5.0.0",
     "morgan": "~1.6.1",
     "node-mailer": "^0.1.1",
     "node-tesseract": "^0.2.7",
